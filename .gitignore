@@ -1,0 +1,42 @@
+# Structurizr generated files
+.structurizr/
+structurizr.log
+write.lock
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Temp files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Node / package managers, only if added later
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build / output folders
+dist/
+build/
+out/
+target/
+.cache/
