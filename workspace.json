@@ -1,0 +1,1495 @@
+{
+  "configuration" : { },
+  "description" : "Modelo Unificado de Arquitectura (C4 Niveles 1, 2 y 3)",
+  "documentation" : { },
+  "id" : 1,
+  "lastModifiedDate" : "2026-06-18T02:42:32Z",
+  "model" : {
+    "people" : [ {
+      "description" : "Usuario del banco que accede vía SPA web o aplicación móvil para consultar saldos, realizar transferencias y pagos.",
+      "id" : "1",
+      "name" : "Cliente / Usuario",
+      "properties" : {
+        "structurizr.dsl.identifier" : "cliente"
+      },
+      "relationships" : [ {
+        "description" : "Consulta saldos e histórico, realiza transferencias y pagos",
+        "destinationId" : "7",
+        "id" : "43",
+        "sourceId" : "1",
+        "tags" : "Relationship",
+        "technology" : "HTTPS / TLS 1.3"
+      }, {
+        "description" : "Accede a banca web",
+        "destinationId" : "8",
+        "id" : "48",
+        "sourceId" : "1",
+        "tags" : "Relationship",
+        "technology" : "HTTPS / TLS 1.3"
+      }, {
+        "description" : "Accede a banca móvil",
+        "destinationId" : "9",
+        "id" : "49",
+        "sourceId" : "1",
+        "tags" : "Relationship",
+        "technology" : "HTTPS / TLS 1.3"
+      } ],
+      "tags" : "Element,Person"
+    } ],
+    "softwareSystems" : [ {
+      "description" : "Sistema legado interno que contiene datos básicos de clientes, cuentas, productos financieros y movimientos bancarios.",
+      "documentation" : { },
+      "id" : "2",
+      "name" : "Core Banking Platform",
+      "properties" : {
+        "structurizr.dsl.identifier" : "coreBanking"
+      },
+      "tags" : "Element,Software System,External System"
+    }, {
+      "description" : "Sistema independiente que provee información detallada del cliente cuando la consulta requiere mayor profundidad de datos.",
+      "documentation" : { },
+      "id" : "3",
+      "name" : "Sistema Complementario",
+      "properties" : {
+        "structurizr.dsl.identifier" : "sistemaCompl"
+      },
+      "tags" : "Element,Software System,External System"
+    }, {
+      "description" : "AWS SES para email transaccional y Twilio para SMS. Envían alertas de movimientos, confirmaciones de transacción y OTPs de autenticación al cliente.",
+      "documentation" : { },
+      "id" : "4",
+      "name" : "Servicios de Notificación",
+      "properties" : {
+        "structurizr.dsl.identifier" : "notificaciones"
+      },
+      "tags" : "Element,Software System,External System"
+    }, {
+      "description" : "ACH Colombia y SWIFT para el procesamiento de transferencias interbancarias nacionales e internacionales.",
+      "documentation" : { },
+      "id" : "5",
+      "name" : "Red Interbancaria",
+      "properties" : {
+        "structurizr.dsl.identifier" : "redInterbank"
+      },
+      "tags" : "Element,Software System,External System"
+    }, {
+      "description" : "Reconocimiento facial (Face Liveness, CompareFaces, IndexFaces) y OCR de documentos de identidad para el proceso de Onboarding.",
+      "documentation" : { },
+      "id" : "6",
+      "name" : "AWS Rekognition + Textract",
+      "properties" : {
+        "structurizr.dsl.identifier" : "rekognition"
+      },
+      "tags" : "Element,Software System,External System"
+    }, {
+      "containers" : [ {
+        "description" : "Interfaz web de banca digital. Permite consultar saldos, ver histórico de movimientos, realizar transferencias y pagos.",
+        "documentation" : { },
+        "group" : "Canales Digitales",
+        "id" : "8",
+        "name" : "SPA Web — Angular",
+        "properties" : {
+          "structurizr.dsl.identifier" : "spaAngular"
+        },
+        "relationships" : [ {
+          "description" : "Autenticación OAuth 2.0",
+          "destinationId" : "10",
+          "id" : "50",
+          "sourceId" : "8",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / OIDC"
+        }, {
+          "description" : "API calls con JWT",
+          "destinationId" : "11",
+          "id" : "52",
+          "sourceId" : "8",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / REST"
+        } ],
+        "tags" : "Element,Container,Web Frontend",
+        "technology" : "Angular 18 / TypeScript / NgRx"
+      }, {
+        "description" : "Aplicación móvil iOS y Android con onboarding biométrico, autenticación por huella o facial, y operaciones bancarias completas.",
+        "documentation" : { },
+        "group" : "Canales Digitales",
+        "id" : "9",
+        "name" : "App Móvil — Flutter",
+        "properties" : {
+          "structurizr.dsl.identifier" : "appFlutter"
+        },
+        "relationships" : [ {
+          "description" : "Autenticación OAuth 2.0",
+          "destinationId" : "10",
+          "id" : "51",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / OIDC"
+        }, {
+          "description" : "API calls con JWT",
+          "destinationId" : "11",
+          "id" : "53",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / REST"
+        } ],
+        "tags" : "Element,Container,Mobile App",
+        "technology" : "Flutter 3 / Dart / BLoC"
+      }, {
+        "description" : "Servidor de identidad OAuth 2.0 / OIDC. Gestiona autenticación con PKCE, MFA (TOTP, SMS OTP, WebAuthn), sesiones y cumplimiento FAPI 2.0.",
+        "documentation" : { },
+        "group" : "Seguridad y Borde",
+        "id" : "10",
+        "name" : "OAuth2 Server — Keycloak",
+        "properties" : {
+          "structurizr.dsl.identifier" : "keycloak"
+        },
+        "tags" : "Element,Container,Identity Provider",
+        "technology" : "Keycloak 24 / Java / EKS HA"
+      }, {
+        "components" : [ {
+          "description" : "Primera línea de defensa. Filtra tráfico según reglas OWASP Top 10 (SQLi, XSS, LFI), aplica throttling por IP y por clientId. Bloquea IPs en listas negras y detecta patrones de DDoS.",
+          "documentation" : { },
+          "id" : "12",
+          "name" : "WAF + Rate Limiter",
+          "properties" : {
+            "structurizr.dsl.identifier" : "waf"
+          },
+          "relationships" : [ {
+            "description" : "Petición filtrada",
+            "destinationId" : "13",
+            "id" : "76",
+            "sourceId" : "12",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "AWS WAF v2 + Kong Rate Limiting Plugin"
+        }, {
+          "description" : "Valida el JWT Bearer Token: firma RS256 contra JWKS de Keycloak, expiración (exp), emisor (iss), audiencia (aud) y claims de scope. Rechaza tokens revocados o malformados con HTTP 401.",
+          "documentation" : { },
+          "id" : "13",
+          "name" : "Token Validator",
+          "properties" : {
+            "structurizr.dsl.identifier" : "tokenValidator"
+          },
+          "relationships" : [ {
+            "description" : "Token verificado",
+            "destinationId" : "14",
+            "id" : "77",
+            "sourceId" : "13",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "AWS Lambda Authorizer / JWT Introspection / JWKS"
+        }, {
+          "description" : "Enruta la petición validada al microservicio correspondiente según el path y versión de API. Aplica balanceo de carga Round Robin entre réplicas EKS. Añade headers de correlación (X-Request-ID).",
+          "documentation" : { },
+          "id" : "14",
+          "name" : "Request Router",
+          "properties" : {
+            "structurizr.dsl.identifier" : "requestRouter"
+          },
+          "relationships" : [ {
+            "description" : "Petición enrutada",
+            "destinationId" : "15",
+            "id" : "78",
+            "sourceId" : "14",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Kong Routes + AWS API Gateway Integrations"
+        }, {
+          "description" : "Previene cascadas de fallos hacia microservicios. Estado CLOSED (normal) → OPEN (umbral 50% errores en 10 s) → HALF-OPEN (sondeo cada 30 s). Respuesta fallback con HTTP 503 + Retry-After.",
+          "documentation" : { },
+          "id" : "15",
+          "name" : "Circuit Breaker",
+          "properties" : {
+            "structurizr.dsl.identifier" : "circuitBreaker"
+          },
+          "relationships" : [ {
+            "description" : "Enruta GET /customers",
+            "destinationId" : "17",
+            "id" : "79",
+            "sourceId" : "15",
+            "tags" : "Relationship",
+            "technology" : "HTTPS"
+          }, {
+            "description" : "Enruta GET /customers",
+            "destinationId" : "16",
+            "id" : "80",
+            "linkedRelationshipId" : "79",
+            "sourceId" : "15",
+            "technology" : "HTTPS"
+          }, {
+            "description" : "Enruta POST /transfers",
+            "destinationId" : "26",
+            "id" : "82",
+            "sourceId" : "15",
+            "tags" : "Relationship",
+            "technology" : "HTTPS"
+          }, {
+            "description" : "Enruta POST /transfers",
+            "destinationId" : "25",
+            "id" : "83",
+            "linkedRelationshipId" : "82",
+            "sourceId" : "15",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Resilience4j CircuitBreaker + Retry + Timeout"
+        } ],
+        "description" : "Punto de entrada único para todos los microservicios. Provee rate limiting, validación de tokens JWT, enrutamiento, circuit breaker y protección DDoS / OWASP Top 10.",
+        "documentation" : { },
+        "group" : "Seguridad y Borde",
+        "id" : "11",
+        "name" : "API Gateway + WAF",
+        "properties" : {
+          "structurizr.dsl.identifier" : "apiGateway"
+        },
+        "relationships" : [ {
+          "description" : "GET /customers",
+          "destinationId" : "16",
+          "id" : "54",
+          "sourceId" : "11",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / REST"
+        }, {
+          "description" : "GET /movements",
+          "destinationId" : "24",
+          "id" : "55",
+          "sourceId" : "11",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / REST"
+        }, {
+          "description" : "POST /transfers",
+          "destinationId" : "25",
+          "id" : "56",
+          "sourceId" : "11",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / REST"
+        }, {
+          "description" : "POST /notifications",
+          "destinationId" : "34",
+          "id" : "57",
+          "sourceId" : "11",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / REST"
+        }, {
+          "description" : "POST /onboarding",
+          "destinationId" : "33",
+          "id" : "58",
+          "sourceId" : "11",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / REST"
+        }, {
+          "description" : "Enruta GET /customers",
+          "destinationId" : "17",
+          "id" : "81",
+          "linkedRelationshipId" : "79",
+          "sourceId" : "11",
+          "technology" : "HTTPS"
+        }, {
+          "description" : "Enruta POST /transfers",
+          "destinationId" : "26",
+          "id" : "84",
+          "linkedRelationshipId" : "82",
+          "sourceId" : "11",
+          "technology" : "HTTPS"
+        } ],
+        "tags" : "Element,Container,Gateway",
+        "technology" : "AWS API Gateway + Kong + AWS WAF"
+      }, {
+        "components" : [ {
+          "description" : "Controlador REST que expone GET /api/v1/customers/{id} y GET /api/v1/customers/{id}/profile. Valida el request (Bean Validation), extrae el userId del JWT y delega al servicio de aplicación.",
+          "documentation" : { },
+          "id" : "17",
+          "name" : "CustomerController",
+          "properties" : {
+            "structurizr.dsl.identifier" : "customerController"
+          },
+          "relationships" : [ {
+            "description" : "Delega consulta",
+            "destinationId" : "18",
+            "id" : "85",
+            "sourceId" : "17",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring MVC @RestController"
+        }, {
+          "description" : "Caso de uso central: orquesta el CacheProxy, el CoreBankingAdapter y el ComplementaryAdapter para construir el perfil completo del cliente. Aplica reglas de data minimization según el scope del token.",
+          "documentation" : { },
+          "id" : "18",
+          "name" : "CustomerQueryService",
+          "properties" : {
+            "structurizr.dsl.identifier" : "customerQuerySvc"
+          },
+          "relationships" : [ {
+            "description" : "Verifica caché",
+            "destinationId" : "19",
+            "id" : "86",
+            "sourceId" : "18",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Consulta extendidos",
+            "destinationId" : "21",
+            "id" : "90",
+            "sourceId" : "18",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Publica auditoría",
+            "destinationId" : "23",
+            "id" : "92",
+            "sourceId" : "18",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring @Service / Application Use Case"
+        }, {
+          "description" : "Implementa el patrón Cache-Aside (Lazy Loading). Genera la clave Redis bp:{userId}:{dataType}:v1, verifica si existe (MISS/HIT), y en caso de MISS consulta el backend y almacena el resultado con el TTL definido por política.",
+          "documentation" : { },
+          "id" : "19",
+          "name" : "CacheProxy",
+          "properties" : {
+            "structurizr.dsl.identifier" : "cacheProxy"
+          },
+          "relationships" : [ {
+            "description" : "GET / SET",
+            "destinationId" : "41",
+            "id" : "87",
+            "sourceId" : "19",
+            "tags" : "Relationship",
+            "technology" : "Redis Protocol"
+          }, {
+            "description" : "MISS: consulta",
+            "destinationId" : "20",
+            "id" : "88",
+            "sourceId" : "19",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring AOP @Around / Cache-Aside Pattern / Redis"
+        }, {
+          "description" : "Anticorruption Layer que abstrae el protocolo del Core Banking (REST/SOAP). Traduce contratos XML/JSON legados a DTOs internos. Aplica Retry con Exponential Backoff (3 intentos, jitter) y timeout de 3 s.",
+          "documentation" : { },
+          "id" : "20",
+          "name" : "CoreBankingAdapter",
+          "properties" : {
+            "structurizr.dsl.identifier" : "coreBankingAdapter"
+          },
+          "relationships" : [ {
+            "description" : "Consulta básicos",
+            "destinationId" : "2",
+            "id" : "89",
+            "sourceId" : "20",
+            "tags" : "Relationship",
+            "technology" : "mTLS"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring @Component / Feign Client / Resilience4j Retry"
+        }, {
+          "description" : "Consulta el Sistema Complementario para obtener información detallada del cliente (scoring, segmentación, historial extendido). Timeout de 2 s. Resultado incluido en la clave de caché del perfil completo.",
+          "documentation" : { },
+          "id" : "21",
+          "name" : "ComplementaryAdapter",
+          "properties" : {
+            "structurizr.dsl.identifier" : "complAdapter"
+          },
+          "relationships" : [ {
+            "description" : "Consulta scoring",
+            "destinationId" : "3",
+            "id" : "91",
+            "sourceId" : "21",
+            "tags" : "Relationship",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring @Component / WebClient"
+        }, {
+          "description" : "Escucha eventos de actualización del Core Banking (webhook o cola SQS) para invalidar entradas de Redis antes del TTL natural. Garantiza consistencia eventual cuando el Core es modificado por canales externos (cajeros, sucursales).",
+          "documentation" : { },
+          "id" : "22",
+          "name" : "CacheInvalidator",
+          "properties" : {
+            "structurizr.dsl.identifier" : "invalidator"
+          },
+          "relationships" : [ {
+            "description" : "Invalida caché",
+            "destinationId" : "19",
+            "id" : "94",
+            "sourceId" : "22",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring @EventListener / SQS Consumer"
+        }, {
+          "description" : "Publica un evento CustomerQueriedEvent a la cola SQS FIFO de auditoría tras cada consulta exitosa. Incluye userId, timestamp, IP, userAgent y resultado. Implementa Outbox Pattern para atomicidad.",
+          "documentation" : { },
+          "id" : "23",
+          "name" : "AuditEventPublisher",
+          "properties" : {
+            "structurizr.dsl.identifier" : "auditPublisher1"
+          },
+          "relationships" : [ {
+            "description" : "Envía evento",
+            "destinationId" : "42",
+            "id" : "93",
+            "sourceId" : "23",
+            "tags" : "Relationship",
+            "technology" : "SQS FIFO"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring @Component / AWS SQS FIFO Producer"
+        } ],
+        "description" : "Orquesta y provee datos del cliente con patrón Cache-Aside sobre Redis. Consulta Core Banking y Sistema Complementario mediante adaptadores.",
+        "documentation" : { },
+        "group" : "Microservicios de Negocio",
+        "id" : "16",
+        "name" : "Customer Data Service",
+        "properties" : {
+          "structurizr.dsl.identifier" : "customerSvc"
+        },
+        "relationships" : [ {
+          "description" : "Cache-Aside",
+          "destinationId" : "41",
+          "id" : "67",
+          "sourceId" : "16",
+          "tags" : "Relationship",
+          "technology" : "Redis Protocol"
+        }, {
+          "description" : "Consulta básicos",
+          "destinationId" : "2",
+          "id" : "68",
+          "sourceId" : "16",
+          "tags" : "Relationship",
+          "technology" : "REST / mTLS"
+        }, {
+          "description" : "Consulta extendidos",
+          "destinationId" : "3",
+          "id" : "69",
+          "sourceId" : "16",
+          "tags" : "Relationship",
+          "technology" : "REST / HTTPS"
+        }, {
+          "description" : "Publica consulta",
+          "destinationId" : "42",
+          "id" : "70",
+          "sourceId" : "16",
+          "tags" : "Relationship",
+          "technology" : "AWS SQS FIFO"
+        }, {
+          "description" : "Eventos auditoría",
+          "destinationId" : "42",
+          "id" : "74",
+          "sourceId" : "16",
+          "tags" : "Relationship",
+          "technology" : "SQS FIFO"
+        } ],
+        "tags" : "Element,Container,Microservice",
+        "technology" : "Spring Boot 3 / Java 21 / EKS"
+      }, {
+        "description" : "Consulta y paginación del histórico de movimientos del cliente desde el Core Banking. Soporta filtros por fecha, tipo y monto.",
+        "documentation" : { },
+        "group" : "Microservicios de Negocio",
+        "id" : "24",
+        "name" : "Movements Service",
+        "properties" : {
+          "structurizr.dsl.identifier" : "movementsSvc"
+        },
+        "relationships" : [ {
+          "description" : "Consulta movimientos",
+          "destinationId" : "2",
+          "id" : "59",
+          "sourceId" : "24",
+          "tags" : "Relationship",
+          "technology" : "REST / mTLS"
+        } ],
+        "tags" : "Element,Container,Microservice",
+        "technology" : "Spring Boot 3 / Java 21 / EKS"
+      }, {
+        "components" : [ {
+          "description" : "Controlador REST: POST /api/v1/transfers (cuenta propia) y POST /api/v1/transfers/interbank. Valida el body con Bean Validation, verifica el scope 'transfer' en el JWT y genera el idempotency-key.",
+          "documentation" : { },
+          "id" : "26",
+          "name" : "TransferController",
+          "properties" : {
+            "structurizr.dsl.identifier" : "transferController"
+          },
+          "relationships" : [ {
+            "description" : "Ejecuta comando",
+            "destinationId" : "27",
+            "id" : "95",
+            "sourceId" : "26",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring MVC @RestController"
+        }, {
+          "description" : "Orquestador SAGA: ejecuta la secuencia validar → reservar fondos → ejecutar débito/crédito → confirmar → publicar eventos. Ante cualquier fallo invoca la compensación correspondiente (rollback). Garantiza exactamente una ejecución por idempotency-key.",
+          "documentation" : { },
+          "id" : "27",
+          "name" : "TransferCommandHandler",
+          "properties" : {
+            "structurizr.dsl.identifier" : "transferHandler"
+          },
+          "relationships" : [ {
+            "description" : "Valida negocio",
+            "destinationId" : "28",
+            "id" : "96",
+            "sourceId" : "27",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Orquesta ACH",
+            "destinationId" : "29",
+            "id" : "97",
+            "sourceId" : "27",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Orquesta SWIFT",
+            "destinationId" : "30",
+            "id" : "99",
+            "sourceId" : "27",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Publica auditoría",
+            "destinationId" : "31",
+            "id" : "101",
+            "sourceId" : "27",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Publica notificación",
+            "destinationId" : "32",
+            "id" : "103",
+            "sourceId" : "27",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "CQRS Command Handler / Saga Orchestrator Pattern"
+        }, {
+          "description" : "Valida las precondiciones de negocio: saldo suficiente, límite diario del cliente, estado de la cuenta destino, listas restrictivas SARLAFT y cuentas bloqueadas. Rechaza con código de error negocio específico.",
+          "documentation" : { },
+          "id" : "28",
+          "name" : "TransferValidator",
+          "properties" : {
+            "structurizr.dsl.identifier" : "transferValidator"
+          },
+          "tags" : "Element,Component",
+          "technology" : "Spring @Component / Domain Service"
+        }, {
+          "description" : "Envía órdenes de transferencia a la red ACH Colombia. Formatea mensajes ISO 20022 (pacs.008), firma el mensaje con certificado digital y maneja los códigos de respuesta ACH (R-codes). mTLS obligatorio.",
+          "documentation" : { },
+          "id" : "29",
+          "name" : "ACHAdapter",
+          "properties" : {
+            "structurizr.dsl.identifier" : "achAdapter"
+          },
+          "relationships" : [ {
+            "description" : "Transfiere fondos",
+            "destinationId" : "5",
+            "id" : "98",
+            "sourceId" : "29",
+            "tags" : "Relationship",
+            "technology" : "ISO 20022"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring @Component / ISO 20022 / mTLS"
+        }, {
+          "description" : "Integra con SWIFT Alliance para transferencias internacionales. Genera mensajes MT103 (legacy) y pacs.008 MX (ISO 20022). Valida IBAN/BIC y maneja ACKs/NAKs de la red SWIFT.",
+          "documentation" : { },
+          "id" : "30",
+          "name" : "SWIFTAdapter",
+          "properties" : {
+            "structurizr.dsl.identifier" : "swiftAdapter"
+          },
+          "relationships" : [ {
+            "description" : "Transfiere internacional",
+            "destinationId" : "5",
+            "id" : "100",
+            "sourceId" : "30",
+            "tags" : "Relationship",
+            "technology" : "MT103"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring @Component / SWIFT Alliance Gateway / ISO 20022"
+        }, {
+          "description" : "Publica TransferExecutedEvent o TransferFailedEvent a la cola SQS FIFO de auditoría de forma atómica con la transacción mediante el Outbox Pattern. Incluye monto, cuentas (tokenizadas), resultado y traza de compensación si aplica.",
+          "documentation" : { },
+          "id" : "31",
+          "name" : "AuditEventPublisher",
+          "properties" : {
+            "structurizr.dsl.identifier" : "auditPublisher2"
+          },
+          "relationships" : [ {
+            "description" : "Envía evento",
+            "destinationId" : "42",
+            "id" : "102",
+            "sourceId" : "31",
+            "tags" : "Relationship",
+            "technology" : "SQS FIFO"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Outbox Pattern / AWS SQS FIFO Producer"
+        }, {
+          "description" : "Publica NotificationRequestedEvent a la cola SQS estándar para que el Notification Service informe al cliente sobre el resultado de su transferencia. Incluye canal preferido, monto y referencia.",
+          "documentation" : { },
+          "id" : "32",
+          "name" : "NotificationEventPublisher",
+          "properties" : {
+            "structurizr.dsl.identifier" : "notifPublisher"
+          },
+          "relationships" : [ {
+            "description" : "Envía evento",
+            "destinationId" : "42",
+            "id" : "104",
+            "sourceId" : "32",
+            "tags" : "Relationship",
+            "technology" : "SQS Standard"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring @Component / AWS SQS Producer"
+        } ],
+        "description" : "Procesa transferencias entre cuentas propias e interbancarias mediante el patrón SAGA. Publica eventos de auditoría y notificación a SQS FIFO.",
+        "documentation" : { },
+        "group" : "Microservicios de Negocio",
+        "id" : "25",
+        "name" : "Transfer Service",
+        "properties" : {
+          "structurizr.dsl.identifier" : "transferSvc"
+        },
+        "relationships" : [ {
+          "description" : "Débito y crédito",
+          "destinationId" : "2",
+          "id" : "60",
+          "sourceId" : "25",
+          "tags" : "Relationship",
+          "technology" : "REST / mTLS"
+        }, {
+          "description" : "Envía orden ACH",
+          "destinationId" : "5",
+          "id" : "61",
+          "sourceId" : "25",
+          "tags" : "Relationship",
+          "technology" : "ISO 20022 / mTLS"
+        }, {
+          "description" : "Publica transferencia",
+          "destinationId" : "42",
+          "id" : "71",
+          "sourceId" : "25",
+          "tags" : "Relationship",
+          "technology" : "AWS SQS FIFO"
+        }, {
+          "description" : "Eventos auditoría",
+          "destinationId" : "42",
+          "id" : "75",
+          "sourceId" : "25",
+          "tags" : "Relationship",
+          "technology" : "SQS FIFO"
+        } ],
+        "tags" : "Element,Container,Microservice",
+        "technology" : "Spring Boot 3 / Java 21 / EKS"
+      }, {
+        "description" : "Registra nuevos clientes: captura y verifica documento con Textract, valida liveness y compara facial con Rekognition, crea credenciales en Keycloak.",
+        "documentation" : { },
+        "group" : "Microservicios de Negocio",
+        "id" : "33",
+        "name" : "Onboarding Service",
+        "properties" : {
+          "structurizr.dsl.identifier" : "onboardingSvc"
+        },
+        "relationships" : [ {
+          "description" : "Verificación biométrica",
+          "destinationId" : "6",
+          "id" : "64",
+          "sourceId" : "33",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / AWS SDK"
+        }, {
+          "description" : "Crea usuario",
+          "destinationId" : "10",
+          "id" : "66",
+          "sourceId" : "33",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / Admin REST API"
+        } ],
+        "tags" : "Element,Container,Microservice",
+        "technology" : "Python 3.12 / Lambda"
+      }, {
+        "description" : "Consume eventos de SQS y envía notificaciones multicanal al cliente: email (AWS SES), SMS (Twilio) y push notifications (FCM/APNs).",
+        "documentation" : { },
+        "group" : "Soporte e Ingesta Asíncrona",
+        "id" : "34",
+        "name" : "Notification Service",
+        "properties" : {
+          "structurizr.dsl.identifier" : "notifSvc"
+        },
+        "relationships" : [ {
+          "description" : "Consume notificaciones",
+          "destinationId" : "42",
+          "id" : "62",
+          "sourceId" : "34",
+          "tags" : "Relationship",
+          "technology" : "AWS SQS"
+        }, {
+          "description" : "Envía email y SMS",
+          "destinationId" : "4",
+          "id" : "63",
+          "sourceId" : "34",
+          "tags" : "Relationship",
+          "technology" : "SMTP / HTTPS"
+        } ],
+        "tags" : "Element,Container,Microservice",
+        "technology" : "Node.js 20 / Lambda"
+      }, {
+        "components" : [ {
+          "description" : "Consumer SQS FIFO que recibe mensajes de auditoría. Implementa deduplicación por eventId (tabla bloom filter en Redis) para garantizar idempotencia ante reintentos del bus. Deserializa y valida el esquema del evento.",
+          "documentation" : { },
+          "id" : "36",
+          "name" : "AuditEventConsumer",
+          "properties" : {
+            "structurizr.dsl.identifier" : "auditConsumer"
+          },
+          "relationships" : [ {
+            "description" : "Consume mensajes",
+            "destinationId" : "42",
+            "id" : "105",
+            "sourceId" : "36",
+            "tags" : "Relationship",
+            "technology" : "SQS FIFO"
+          }, {
+            "description" : "Pasa evento",
+            "destinationId" : "37",
+            "id" : "106",
+            "sourceId" : "36",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring Integration / SQS Message Listener / Idempotent Consumer"
+        }, {
+          "description" : "Enriquece el evento con metadatos del servidor: timestamp authoritative, geolocalización aproximada por IP (GeoIP2), hash del userAgent, versión del esquema. Orquesta el cálculo del hash chain y delega la persistencia.",
+          "documentation" : { },
+          "id" : "37",
+          "name" : "AuditCommandHandler",
+          "properties" : {
+            "structurizr.dsl.identifier" : "auditHandler"
+          },
+          "relationships" : [ {
+            "description" : "Solicita firmado",
+            "destinationId" : "38",
+            "id" : "107",
+            "sourceId" : "37",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Delega persistencia",
+            "destinationId" : "39",
+            "id" : "108",
+            "sourceId" : "37",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring @Service / Domain Command Handler"
+        }, {
+          "description" : "Calcula el hash de integridad encadenado: hashChain = SHA-256(prevEventHash + currentEventPayload). El primer evento de cada día usa como semilla el hash del bloque anterior (similar a blockchain). Cualquier alteración del registro histórico es detectable.",
+          "documentation" : { },
+          "id" : "38",
+          "name" : "HashChainService",
+          "properties" : {
+            "structurizr.dsl.identifier" : "hashChainSvc"
+          },
+          "tags" : "Element,Component",
+          "technology" : "Spring @Component / Cryptographic Service / SHA-256"
+        }, {
+          "description" : "Repositorio append-only que persiste eventos en PostgreSQL. Políticas a nivel de BD (Row-Level Security + GRANT solo INSERT) impiden UPDATE y DELETE. Los datos PII del payload se cifran con AWS KMS antes de persistir. Particionado por mes para consultas de auditoría eficientes.",
+          "documentation" : { },
+          "id" : "39",
+          "name" : "AuditRepository",
+          "properties" : {
+            "structurizr.dsl.identifier" : "auditRepo"
+          },
+          "relationships" : [ {
+            "description" : "INSERT append-only",
+            "destinationId" : "40",
+            "id" : "109",
+            "sourceId" : "39",
+            "tags" : "Relationship",
+            "technology" : "JDBC"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring Data JPA / @Repository / WORM / AWS KMS"
+        } ],
+        "description" : "Consume eventos de auditoría desde SQS FIFO de forma idempotente y los persiste de forma inmutable en el Audit DB mediante Event Sourcing.",
+        "documentation" : { },
+        "group" : "Soporte e Ingesta Asíncrona",
+        "id" : "35",
+        "name" : "Audit Service",
+        "properties" : {
+          "structurizr.dsl.identifier" : "auditSvc"
+        },
+        "relationships" : [ {
+          "description" : "Consume auditoría",
+          "destinationId" : "42",
+          "id" : "72",
+          "sourceId" : "35",
+          "tags" : "Relationship",
+          "technology" : "AWS SQS FIFO"
+        }, {
+          "description" : "Persiste eventos",
+          "destinationId" : "40",
+          "id" : "73",
+          "sourceId" : "35",
+          "tags" : "Relationship",
+          "technology" : "JDBC / TLS"
+        } ],
+        "tags" : "Element,Container,Microservice",
+        "technology" : "Java 21 / Spring Boot / EKS"
+      }, {
+        "description" : "Event store inmutable de todas las acciones del cliente. Append-only, WORM, hash chain verificable. Retención mínima 7 años (Circular SFC 052).",
+        "documentation" : { },
+        "group" : "Datos e Infraestructura",
+        "id" : "40",
+        "name" : "Audit DB",
+        "properties" : {
+          "structurizr.dsl.identifier" : "auditDb"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "PostgreSQL 15 / RDS Multi-AZ"
+      }, {
+        "description" : "Caché en memoria para datos frecuentes de clientes (perfil, cuentas, últimos movimientos) con patrón Cache-Aside. Cluster Mode con réplicas Multi-AZ.",
+        "documentation" : { },
+        "group" : "Datos e Infraestructura",
+        "id" : "41",
+        "name" : "Redis Cache",
+        "properties" : {
+          "structurizr.dsl.identifier" : "redisCache"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "AWS ElastiCache Redis 7 — Cluster Mode"
+      }, {
+        "description" : "Bus de eventos asíncrono para desacoplar microservicios. Colas FIFO para auditoría (orden garantizado) y Standard para notificaciones. DLQ en ambas.",
+        "documentation" : { },
+        "group" : "Datos e Infraestructura",
+        "id" : "42",
+        "name" : "Message Bus",
+        "properties" : {
+          "structurizr.dsl.identifier" : "messageBus"
+        },
+        "tags" : "Element,Container,Message Bus",
+        "technology" : "AWS SQS FIFO + SNS Fan-out"
+      } ],
+      "description" : "Plataforma digital multicanal de BP: SPA Angular, App Móvil Flutter, microservicios en AWS EKS, API Gateway Kong y autenticación OAuth 2.0 con Keycloak.",
+      "documentation" : { },
+      "id" : "7",
+      "name" : "Sistema de Banca por Internet [BP]",
+      "properties" : {
+        "structurizr.dsl.identifier" : "bancaBP"
+      },
+      "relationships" : [ {
+        "description" : "Consulta datos básicos de cliente, cuentas y movimientos",
+        "destinationId" : "2",
+        "id" : "44",
+        "sourceId" : "7",
+        "tags" : "Relationship",
+        "technology" : "REST / SOAP / mTLS"
+      }, {
+        "description" : "Obtiene información detallada del cliente bajo demanda",
+        "destinationId" : "3",
+        "id" : "45",
+        "sourceId" : "7",
+        "tags" : "Relationship",
+        "technology" : "REST / HTTPS"
+      }, {
+        "description" : "Envía notificaciones de movimientos y alertas de seguridad",
+        "destinationId" : "4",
+        "id" : "46",
+        "sourceId" : "7",
+        "tags" : "Relationship",
+        "technology" : "SMTP / HTTPS"
+      }, {
+        "description" : "Procesa órdenes de transferencia interbancaria",
+        "destinationId" : "5",
+        "id" : "47",
+        "sourceId" : "7",
+        "tags" : "Relationship",
+        "technology" : "ISO 20022 / SWIFT"
+      }, {
+        "description" : "Verificación biométrica",
+        "destinationId" : "6",
+        "id" : "65",
+        "linkedRelationshipId" : "64",
+        "sourceId" : "7",
+        "technology" : "HTTPS / AWS SDK"
+      } ],
+      "tags" : "Element,Software System,BP Internal"
+    } ]
+  },
+  "name" : "BP — Banca por Internet",
+  "properties" : {
+    "structurizr.inspection.error" : "22",
+    "structurizr.dsl" : "d29ya3NwYWNlICJCUCDigJQgQmFuY2EgcG9yIEludGVybmV0IiAiTW9kZWxvIFVuaWZpY2FkbyBkZSBBcnF1aXRlY3R1cmEgKEM0IE5pdmVsZXMgMSwgMiB5IDMpIiB7CgogICAgbW9kZWwgewoKICAgICAgICAjIOKUgOKUgOKUgCBBQ1RPUkVTIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgAogICAgICAgIGNsaWVudGUgPSBwZXJzb24gIkNsaWVudGUgLyBVc3VhcmlvIiAiVXN1YXJpbyBkZWwgYmFuY28gcXVlIGFjY2VkZSB2w61hIFNQQSB3ZWIgbyBhcGxpY2FjacOzbiBtw7N2aWwgcGFyYSBjb25zdWx0YXIgc2FsZG9zLCByZWFsaXphciB0cmFuc2ZlcmVuY2lhcyB5IHBhZ29zLiIKCiAgICAgICAgIyDilIDilIDilIAgU0lTVEVNQVMgRVhURVJOT1Mg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACiAgICAgICAgY29yZUJhbmtpbmcgPSBzb2Z0d2FyZVN5c3RlbSAiQ29yZSBCYW5raW5nIFBsYXRmb3JtIiAiU2lzdGVtYSBsZWdhZG8gaW50ZXJubyBxdWUgY29udGllbmUgZGF0b3MgYsOhc2ljb3MgZGUgY2xpZW50ZXMsIGN1ZW50YXMsIHByb2R1Y3RvcyBmaW5hbmNpZXJvcyB5IG1vdmltaWVudG9zIGJhbmNhcmlvcy4iIHsKICAgICAgICAgICAgdGFncyAiRXh0ZXJuYWwgU3lzdGVtIgogICAgICAgIH0KCiAgICAgICAgc2lzdGVtYUNvbXBsID0gc29mdHdhcmVTeXN0ZW0gIlNpc3RlbWEgQ29tcGxlbWVudGFyaW8iICJTaXN0ZW1hIGluZGVwZW5kaWVudGUgcXVlIHByb3ZlZSBpbmZvcm1hY2nDs24gZGV0YWxsYWRhIGRlbCBjbGllbnRlIGN1YW5kbyBsYSBjb25zdWx0YSByZXF1aWVyZSBtYXlvciBwcm9mdW5kaWRhZCBkZSBkYXRvcy4iIHsKICAgICAgICAgICAgdGFncyAiRXh0ZXJuYWwgU3lzdGVtIgogICAgICAgIH0KCiAgICAgICAgbm90aWZpY2FjaW9uZXMgPSBzb2Z0d2FyZVN5c3RlbSAiU2VydmljaW9zIGRlIE5vdGlmaWNhY2nDs24iICJBV1MgU0VTIHBhcmEgZW1haWwgdHJhbnNhY2Npb25hbCB5IFR3aWxpbyBwYXJhIFNNUy4gRW52w61hbiBhbGVydGFzIGRlIG1vdmltaWVudG9zLCBjb25maXJtYWNpb25lcyBkZSB0cmFuc2FjY2nDs24geSBPVFBzIGRlIGF1dGVudGljYWNpw7NuIGFsIGNsaWVudGUuIiB7CiAgICAgICAgICAgIHRhZ3MgIkV4dGVybmFsIFN5c3RlbSIKICAgICAgICB9CgogICAgICAgIHJlZEludGVyYmFuayA9IHNvZnR3YXJlU3lzdGVtICJSZWQgSW50ZXJiYW5jYXJpYSIgIkFDSCBDb2xvbWJpYSB5IFNXSUZUIHBhcmEgZWwgcHJvY2VzYW1pZW50byBkZSB0cmFuc2ZlcmVuY2lhcyBpbnRlcmJhbmNhcmlhcyBuYWNpb25hbGVzIGUgaW50ZXJuYWNpb25hbGVzLiIgewogICAgICAgICAgICB0YWdzICJFeHRlcm5hbCBTeXN0ZW0iCiAgICAgICAgfQoKICAgICAgICByZWtvZ25pdGlvbiA9IHNvZnR3YXJlU3lzdGVtICJBV1MgUmVrb2duaXRpb24gKyBUZXh0cmFjdCIgIlJlY29ub2NpbWllbnRvIGZhY2lhbCAoRmFjZSBMaXZlbmVzcywgQ29tcGFyZUZhY2VzLCBJbmRleEZhY2VzKSB5IE9DUiBkZSBkb2N1bWVudG9zIGRlIGlkZW50aWRhZCBwYXJhIGVsIHByb2Nlc28gZGUgT25ib2FyZGluZy4iIHsKICAgICAgICAgICAgdGFncyAiRXh0ZXJuYWwgU3lzdGVtIgogICAgICAgIH0KCiAgICAgICAgIyDilIDilIDilIAgU0lTVEVNQSBQUklOQ0lQQUwgKENPTiBBR1JVUEFDSU9ORVMgUkUgRVNUUlVDVFVSQURBUykg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACiAgICAgICAgYmFuY2FCUCA9IHNvZnR3YXJlU3lzdGVtICJTaXN0ZW1hIGRlIEJhbmNhIHBvciBJbnRlcm5ldCBbQlBdIiAiUGxhdGFmb3JtYSBkaWdpdGFsIG11bHRpY2FuYWwgZGUgQlA6IFNQQSBBbmd1bGFyLCBBcHAgTcOzdmlsIEZsdXR0ZXIsIG1pY3Jvc2VydmljaW9zIGVuIEFXUyBFS1MsIEFQSSBHYXRld2F5IEtvbmcgeSBhdXRlbnRpY2FjacOzbiBPQXV0aCAyLjAgY29uIEtleWNsb2FrLiIgewogICAgICAgICAgICB0YWdzICJCUCBJbnRlcm5hbCIKCiAgICAgICAgICAgICMgR1JVUE8gMTogQ2FuYWxlcyBEaWdpdGFsZXMgKEZyb250ZW5kKQogICAgICAgICAgICBncm91cCAiQ2FuYWxlcyBEaWdpdGFsZXMiIHsKICAgICAgICAgICAgICAgIHNwYUFuZ3VsYXIgPSBjb250YWluZXIgIlNQQSBXZWIg4oCUIEFuZ3VsYXIiICJJbnRlcmZheiB3ZWIgZGUgYmFuY2EgZGlnaXRhbC4gUGVybWl0ZSBjb25zdWx0YXIgc2FsZG9zLCB2ZXIgaGlzdMOzcmljbyBkZSBtb3ZpbWllbnRvcywgcmVhbGl6YXIgdHJhbnNmZXJlbmNpYXMgeSBwYWdvcy4iICJBbmd1bGFyIDE4IC8gVHlwZVNjcmlwdCAvIE5nUngiIHsKICAgICAgICAgICAgICAgICAgICB0YWdzICJXZWIgRnJvbnRlbmQiCiAgICAgICAgICAgICAgICB9CgogICAgICAgICAgICAgICAgYXBwRmx1dHRlciA9IGNvbnRhaW5lciAiQXBwIE3Ds3ZpbCDigJQgRmx1dHRlciIgIkFwbGljYWNpw7NuIG3Ds3ZpbCBpT1MgeSBBbmRyb2lkIGNvbiBvbmJvYXJkaW5nIGJpb23DqXRyaWNvLCBhdXRlbnRpY2FjacOzbiBwb3IgaHVlbGxhIG8gZmFjaWFsLCB5IG9wZXJhY2lvbmVzIGJhbmNhcmlhcyBjb21wbGV0YXMuIiAiRmx1dHRlciAzIC8gRGFydCAvIEJMb0MiIHsKICAgICAgICAgICAgICAgICAgICB0YWdzICJNb2JpbGUgQXBwIgogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CgogICAgICAgICAgICAjIEdSVVBPIDI6IENhcGEgZGUgU2VndXJpZGFkIHkgQm9yZGUgKEVkZ2UpCiAgICAgICAgICAgIGdyb3VwICJTZWd1cmlkYWQgeSBCb3JkZSIgewogICAgICAgICAgICAgICAga2V5Y2xvYWsgPSBjb250YWluZXIgIk9BdXRoMiBTZXJ2ZXIg4oCUIEtleWNsb2FrIiAiU2Vydmlkb3IgZGUgaWRlbnRpZGFkIE9BdXRoIDIuMCAvIE9JREMuIEdlc3Rpb25hIGF1dGVudGljYWNpw7NuIGNvbiBQS0NFLCBNRkEgKFRPVFAsIFNNUyBPVFAsIFdlYkF1dGhuKSwgc2VzaW9uZXMgeSBjdW1wbGltaWVudG8gRkFQSSAyLjAuIiAiS2V5Y2xvYWsgMjQgLyBKYXZhIC8gRUtTIEhBIiB7CiAgICAgICAgICAgICAgICAgICAgdGFncyAiSWRlbnRpdHkgUHJvdmlkZXIiCiAgICAgICAgICAgICAgICB9CgogICAgICAgICAgICAgICAgYXBpR2F0ZXdheSA9IGNvbnRhaW5lciAiQVBJIEdhdGV3YXkgKyBXQUYiICJQdW50byBkZSBlbnRyYWRhIMO6bmljbyBwYXJhIHRvZG9zIGxvcyBtaWNyb3NlcnZpY2lvcy4gUHJvdmVlIHJhdGUgbGltaXRpbmcsIHZhbGlkYWNpw7NuIGRlIHRva2VucyBKV1QsIGVucnV0YW1pZW50bywgY2lyY3VpdCBicmVha2VyIHkgcHJvdGVjY2nDs24gRERvUyAvIE9XQVNQIFRvcCAxMC4iICJBV1MgQVBJIEdhdGV3YXkgKyBLb25nICsgQVdTIFdBRiIgewogICAgICAgICAgICAgICAgICAgIHRhZ3MgIkdhdGV3YXkiCgogICAgICAgICAgICAgICAgICAgIHdhZiA9IGNvbXBvbmVudCAiV0FGICsgUmF0ZSBMaW1pdGVyIiAiUHJpbWVyYSBsw61uZWEgZGUgZGVmZW5zYS4gRmlsdHJhIHRyw6FmaWNvIHNlZ8O6biByZWdsYXMgT1dBU1AgVG9wIDEwIChTUUxpLCBYU1MsIExGSSksIGFwbGljYSB0aHJvdHRsaW5nIHBvciBJUCB5IHBvciBjbGllbnRJZC4gQmxvcXVlYSBJUHMgZW4gbGlzdGFzIG5lZ3JhcyB5IGRldGVjdGEgcGF0cm9uZXMgZGUgRERvUy4iICJBV1MgV0FGIHYyICsgS29uZyBSYXRlIExpbWl0aW5nIFBsdWdpbiIKICAgICAgICAgICAgICAgICAgICB0b2tlblZhbGlkYXRvciA9IGNvbXBvbmVudCAiVG9rZW4gVmFsaWRhdG9yIiAiVmFsaWRhIGVsIEpXVCBCZWFyZXIgVG9rZW46IGZpcm1hIFJTMjU2IGNvbnRyYSBKV0tTIGRlIEtleWNsb2FrLCBleHBpcmFjacOzbiAoZXhwKSwgZW1pc29yIChpc3MpLCBhdWRpZW5jaWEgKGF1ZCkgeSBjbGFpbXMgZGUgc2NvcGUuIFJlY2hhemEgdG9rZW5zIHJldm9jYWRvcyBvIG1hbGZvcm1hZG9zIGNvbiBIVFRQIDQwMS4iICJBV1MgTGFtYmRhIEF1dGhvcml6ZXIgLyBKV1QgSW50cm9zcGVjdGlvbiAvIEpXS1MiCiAgICAgICAgICAgICAgICAgICAgcmVxdWVzdFJvdXRlciA9IGNvbXBvbmVudCAiUmVxdWVzdCBSb3V0ZXIiICJFbnJ1dGEgbGEgcGV0aWNpw7NuIHZhbGlkYWRhIGFsIG1pY3Jvc2VydmljaW8gY29ycmVzcG9uZGllbnRlIHNlZ8O6biBlbCBwYXRoIHkgdmVyc2nDs24gZGUgQVBJLiBBcGxpY2EgYmFsYW5jZW8gZGUgY2FyZ2EgUm91bmQgUm9iaW4gZW50cmUgcsOpcGxpY2FzIEVLUy4gQcOxYWRlIGhlYWRlcnMgZGUgY29ycmVsYWNpw7NuIChYLVJlcXVlc3QtSUQpLiIgIktvbmcgUm91dGVzICsgQVdTIEFQSSBHYXRld2F5IEludGVncmF0aW9ucyIKICAgICAgICAgICAgICAgICAgICBjaXJjdWl0QnJlYWtlciA9IGNvbXBvbmVudCAiQ2lyY3VpdCBCcmVha2VyIiAiUHJldmllbmUgY2FzY2FkYXMgZGUgZmFsbG9zIGhhY2lhIG1pY3Jvc2VydmljaW9zLiBFc3RhZG8gQ0xPU0VEIChub3JtYWwpIOKGkiBPUEVOICh1bWJyYWwgNTAlIGVycm9yZXMgZW4gMTAgcykg4oaSIEhBTEYtT1BFTiAoc29uZGVvIGNhZGEgMzAgcykuIFJlc3B1ZXN0YSBmYWxsYmFjayBjb24gSFRUUCA1MDMgKyBSZXRyeS1BZnRlci4iICJSZXNpbGllbmNlNGogQ2lyY3VpdEJyZWFrZXIgKyBSZXRyeSArIFRpbWVvdXQiCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgICMgR1JVUE8gMzogU2VydmljaW9zIGRlIE5lZ29jaW8gU8OtbmNyb25vcyAoQ29yZSkKICAgICAgICAgICAgZ3JvdXAgIk1pY3Jvc2VydmljaW9zIGRlIE5lZ29jaW8iIHsKICAgICAgICAgICAgICAgIGN1c3RvbWVyU3ZjID0gY29udGFpbmVyICJDdXN0b21lciBEYXRhIFNlcnZpY2UiICJPcnF1ZXN0YSB5IHByb3ZlZSBkYXRvcyBkZWwgY2xpZW50ZSBjb24gcGF0csOzbiBDYWNoZS1Bc2lkZSBzb2JyZSBSZWRpcy4gQ29uc3VsdGEgQ29yZSBCYW5raW5nIHkgU2lzdGVtYSBDb21wbGVtZW50YXJpbyBtZWRpYW50ZSBhZGFwdGFkb3Jlcy4iICJTcHJpbmcgQm9vdCAzIC8gSmF2YSAyMSAvIEVLUyIgewogICAgICAgICAgICAgICAgICAgIHRhZ3MgIk1pY3Jvc2VydmljZSIKCiAgICAgICAgICAgICAgICAgICAgY3VzdG9tZXJDb250cm9sbGVyID0gY29tcG9uZW50ICJDdXN0b21lckNvbnRyb2xsZXIiICJDb250cm9sYWRvciBSRVNUIHF1ZSBleHBvbmUgR0VUIC9hcGkvdjEvY3VzdG9tZXJzL3tpZH0geSBHRVQgL2FwaS92MS9jdXN0b21lcnMve2lkfS9wcm9maWxlLiBWYWxpZGEgZWwgcmVxdWVzdCAoQmVhbiBWYWxpZGF0aW9uKSwgZXh0cmFlIGVsIHVzZXJJZCBkZWwgSldUIHkgZGVsZWdhIGFsIHNlcnZpY2lvIGRlIGFwbGljYWNpw7NuLiIgIlNwcmluZyBNVkMgQFJlc3RDb250cm9sbGVyIgogICAgICAgICAgICAgICAgICAgIGN1c3RvbWVyUXVlcnlTdmMgPSBjb21wb25lbnQgIkN1c3RvbWVyUXVlcnlTZXJ2aWNlIiAiQ2FzbyBkZSB1c28gY2VudHJhbDogb3JxdWVzdGEgZWwgQ2FjaGVQcm94eSwgZWwgQ29yZUJhbmtpbmdBZGFwdGVyIHkgZWwgQ29tcGxlbWVudGFyeUFkYXB0ZXIgcGFyYSBjb25zdHJ1aXIgZWwgcGVyZmlsIGNvbXBsZXRvIGRlbCBjbGllbnRlLiBBcGxpY2EgcmVnbGFzIGRlIGRhdGEgbWluaW1pemF0aW9uIHNlZ8O6biBlbCBzY29wZSBkZWwgdG9rZW4uIiAiU3ByaW5nIEBTZXJ2aWNlIC8gQXBwbGljYXRpb24gVXNlIENhc2UiCiAgICAgICAgICAgICAgICAgICAgY2FjaGVQcm94eSA9IGNvbXBvbmVudCAiQ2FjaGVQcm94eSIgIkltcGxlbWVudGEgZWwgcGF0csOzbiBDYWNoZS1Bc2lkZSAoTGF6eSBMb2FkaW5nKS4gR2VuZXJhIGxhIGNsYXZlIFJlZGlzIGJwOnt1c2VySWR9OntkYXRhVHlwZX06djEsIHZlcmlmaWNhIHNpIGV4aXN0ZSAoTUlTUy9ISVQpLCB5IGVuIGNhc28gZGUgTUlTUyBjb25zdWx0YSBlbCBiYWNrZW5kIHkgYWxtYWNlbmEgZWwgcmVzdWx0YWRvIGNvbiBlbCBUVEwgZGVmaW5pZG8gcG9yIHBvbMOtdGljYS4iICJTcHJpbmcgQU9QIEBBcm91bmQgLyBDYWNoZS1Bc2lkZSBQYXR0ZXJuIC8gUmVkaXMiCiAgICAgICAgICAgICAgICAgICAgY29yZUJhbmtpbmdBZGFwdGVyID0gY29tcG9uZW50ICJDb3JlQmFua2luZ0FkYXB0ZXIiICJBbnRpY29ycnVwdGlvbiBMYXllciBxdWUgYWJzdHJhZSBlbCBwcm90b2NvbG8gZGVsIENvcmUgQmFua2luZyAoUkVTVC9TT0FQKS4gVHJhZHVjZSBjb250cmF0b3MgWE1ML0pTT04gbGVnYWRvcyBhIERUT3MgaW50ZXJub3MuIEFwbGljYSBSZXRyeSBjb24gRXhwb25lbnRpYWwgQmFja29mZiAoMyBpbnRlbnRvcywgaml0dGVyKSB5IHRpbWVvdXQgZGUgMyBzLiIgIlNwcmluZyBAQ29tcG9uZW50IC8gRmVpZ24gQ2xpZW50IC8gUmVzaWxpZW5jZTRqIFJldHJ5IgogICAgICAgICAgICAgICAgICAgIGNvbXBsQWRhcHRlciA9IGNvbXBvbmVudCAiQ29tcGxlbWVudGFyeUFkYXB0ZXIiICJDb25zdWx0YSBlbCBTaXN0ZW1hIENvbXBsZW1lbnRhcmlvIHBhcmEgb2J0ZW5lciBpbmZvcm1hY2nDs24gZGV0YWxsYWRhIGRlbCBjbGllbnRlIChzY29yaW5nLCBzZWdtZW50YWNpw7NuLCBoaXN0b3JpYWwgZXh0ZW5kaWRvKS4gVGltZW91dCBkZSAyIHMuIFJlc3VsdGFkbyBpbmNsdWlkbyBlbiBsYSBjbGF2ZSBkZSBjYWNow6kgZGVsIHBlcmZpbCBjb21wbGV0by4iICJTcHJpbmcgQENvbXBvbmVudCAvIFdlYkNsaWVudCIKICAgICAgICAgICAgICAgICAgICBpbnZhbGlkYXRvciA9IGNvbXBvbmVudCAiQ2FjaGVJbnZhbGlkYXRvciIgIkVzY3VjaGEgZXZlbnRvcyBkZSBhY3R1YWxpemFjacOzbiBkZWwgQ29yZSBCYW5raW5nICh3ZWJob29rIG8gY29sYSBTUVMpIHBhcmEgaW52YWxpZGFyIGVudHJhZGFzIGRlIFJlZGlzIGFudGVzIGRlbCBUVEwgbmF0dXJhbC4gR2FyYW50aXphIGNvbnNpc3RlbmNpYSBldmVudHVhbCBjdWFuZG8gZWwgQ29yZSBlcyBtb2RpZmljYWRvIHBvciBjYW5hbGVzIGV4dGVybm9zIChjYWplcm9zLCBzdWN1cnNhbGVzKS4iICJTcHJpbmcgQEV2ZW50TGlzdGVuZXIgLyBTUVMgQ29uc3VtZXIiCiAgICAgICAgICAgICAgICAgICAgYXVkaXRQdWJsaXNoZXIxID0gY29tcG9uZW50ICJBdWRpdEV2ZW50UHVibGlzaGVyIiAiUHVibGljYSB1biBldmVudG8gQ3VzdG9tZXJRdWVyaWVkRXZlbnQgYSBsYSBjb2xhIFNRUyBGSUZPIGRlIGF1ZGl0b3LDrWEgdHJhcyBjYWRhIGNvbnN1bHRhIGV4aXRvc2EuIEluY2x1eWUgdXNlcklkLCB0aW1lc3RhbXAsIElQLCB1c2VyQWdlbnQgeSByZXN1bHRhZG8uIEltcGxlbWVudGEgT3V0Ym94IFBhdHRlcm4gcGFyYSBhdG9taWNpZGFkLiIgIlNwcmluZyBAQ29tcG9uZW50IC8gQVdTIFNRUyBGSUZPIFByb2R1Y2VyIgogICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIG1vdmVtZW50c1N2YyA9IGNvbnRhaW5lciAiTW92ZW1lbnRzIFNlcnZpY2UiICJDb25zdWx0YSB5IHBhZ2luYWNpw7NuIGRlbCBoaXN0w7NyaWNvIGRlIG1vdmltaWVudG9zIGRlbCBjbGllbnRlIGRlc2RlIGVsIENvcmUgQmFua2luZy4gU29wb3J0YSBmaWx0cm9zIHBvciBmZWNoYSwgdGlwbyB5IG1vbnRvLiIgIlNwcmluZyBCb290IDMgLyBKYXZhIDIxIC8gRUtTIiB7CiAgICAgICAgICAgICAgICAgICAgdGFncyAiTWljcm9zZXJ2aWNlIgogICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIHRyYW5zZmVyU3ZjID0gY29udGFpbmVyICJUcmFuc2ZlciBTZXJ2aWNlIiAiUHJvY2VzYSB0cmFuc2ZlcmVuY2lhcyBlbnRyZSBjdWVudGFzIHByb3BpYXMgZSBpbnRlcmJhbmNhcmlhcyBtZWRpYW50ZSBlbCBwYXRyw7NuIFNBR0EuIFB1YmxpY2EgZXZlbnRvcyBkZSBhdWRpdG9yw61hIHkgbm90aWZpY2FjacOzbiBhIFNRUyBGSUZPLiIgIlNwcmluZyBCb290IDMgLyBKYXZhIDIxIC8gRUtTIiB7CiAgICAgICAgICAgICAgICAgICAgdGFncyAiTWljcm9zZXJ2aWNlIgoKICAgICAgICAgICAgICAgICAgICB0cmFuc2ZlckNvbnRyb2xsZXIgPSBjb21wb25lbnQgIlRyYW5zZmVyQ29udHJvbGxlciIgIkNvbnRyb2xhZG9yIFJFU1Q6IFBPU1QgL2FwaS92MS90cmFuc2ZlcnMgKGN1ZW50YSBwcm9waWEpIHkgUE9TVCAvYXBpL3YxL3RyYW5zZmVycy9pbnRlcmJhbmsuIFZhbGlkYSBlbCBib2R5IGNvbiBCZWFuIFZhbGlkYXRpb24sIHZlcmlmaWNhIGVsIHNjb3BlICd0cmFuc2ZlcicgZW4gZWwgSldUIHkgZ2VuZXJhIGVsIGlkZW1wb3RlbmN5LWtleS4iICJTcHJpbmcgTVZDIEBSZXN0Q29udHJvbGxlciIKICAgICAgICAgICAgICAgICAgICB0cmFuc2ZlckhhbmRsZXIgPSBjb21wb25lbnQgIlRyYW5zZmVyQ29tbWFuZEhhbmRsZXIiICJPcnF1ZXN0YWRvciBTQUdBOiBlamVjdXRhIGxhIHNlY3VlbmNpYSB2YWxpZGFyIOKGkiByZXNlcnZhciBmb25kb3Mg4oaSIGVqZWN1dGFyIGTDqWJpdG8vY3LDqWRpdG8g4oaSIGNvbmZpcm1hciDihpIgcHVibGljYXIgZXZlbnRvcy4gQW50ZSBjdWFscXVpZXIgZmFsbG8gaW52b2NhIGxhIGNvbXBlbnNhY2nDs24gY29ycmVzcG9uZGllbnRlIChyb2xsYmFjaykuIEdhcmFudGl6YSBleGFjdGFtZW50ZSB1bmEgZWplY3VjacOzbiBwb3IgaWRlbXBvdGVuY3kta2V5LiIgIkNRUlMgQ29tbWFuZCBIYW5kbGVyIC8gU2FnYSBPcmNoZXN0cmF0b3IgUGF0dGVybiIKICAgICAgICAgICAgICAgICAgICB0cmFuc2ZlclZhbGlkYXRvciA9IGNvbXBvbmVudCAiVHJhbnNmZXJWYWxpZGF0b3IiICJWYWxpZGEgbGFzIHByZWNvbmRpY2lvbmVzIGRlIG5lZ29jaW86IHNhbGRvIHN1ZmljaWVudGUsIGzDrW1pdGUgZGlhcmlvIGRlbCBjbGllbnRlLCBlc3RhZG8gZGUgbGEgY3VlbnRhIGRlc3Rpbm8sIGxpc3RhcyByZXN0cmljdGl2YXMgU0FSTEFGVCB5IGN1ZW50YXMgYmxvcXVlYWRhcy4gUmVjaGF6YSBjb24gY8OzZGlnbyBkZSBlcnJvciBuZWdvY2lvIGVzcGVjw61maWNvLiIgIlNwcmluZyBAQ29tcG9uZW50IC8gRG9tYWluIFNlcnZpY2UiCiAgICAgICAgICAgICAgICAgICAgYWNoQWRhcHRlciA9IGNvbXBvbmVudCAiQUNIQWRhcHRlciIgIkVudsOtYSDDs3JkZW5lcyBkZSB0cmFuc2ZlcmVuY2lhIGEgbGEgcmVkIEFDSCBDb2xvbWJpYS4gRm9ybWF0ZWEgbWVuc2FqZXMgSVNPIDIwMDIyIChwYWNzLjAwOCksIGZpcm1hIGVsIG1lbnNhamUgY29uIGNlcnRpZmljYWRvIGRpZ2l0YWwgeSBtYW5lamEgbG9zIGPDs2RpZ29zIGRlIHJlc3B1ZXN0YSBBQ0ggKFItY29kZXMpLiBtVExTIG9ibGlnYXRvcmlvLiIgIlNwcmluZyBAQ29tcG9uZW50IC8gSVNPIDIwMDIyIC8gbVRMUyIKICAgICAgICAgICAgICAgICAgICBzd2lmdEFkYXB0ZXIgPSBjb21wb25lbnQgIlNXSUZUQWRhcHRlciIgIkludGVncmEgY29uIFNXSUZUIEFsbGlhbmNlIHBhcmEgdHJhbnNmZXJlbmNpYXMgaW50ZXJuYWNpb25hbGVzLiBHZW5lcmEgbWVuc2FqZXMgTVQxMDMgKGxlZ2FjeSkgeSBwYWNzLjAwOCBNWCAoSVNPIDIwMDIyKS4gVmFsaWRhIElCQU4vQklDIHkgbWFuZWphIEFDS3MvTkFLcyBkZSBsYSByZWQgU1dJRlQuIiAiU3ByaW5nIEBDb21wb25lbnQgLyBTV0lGVCBBbGxpYW5jZSBHYXRld2F5IC8gSVNPIDIwMDIyIgogICAgICAgICAgICAgICAgICAgIGF1ZGl0UHVibGlzaGVyMiA9IGNvbXBvbmVudCAiQXVkaXRFdmVudFB1Ymxpc2hlciIgIlB1YmxpY2EgVHJhbnNmZXJFeGVjdXRlZEV2ZW50IG8gVHJhbnNmZXJGYWlsZWRFdmVudCBhIGxhIGNvbGEgU1FTIEZJRk8gZGUgYXVkaXRvcsOtYSBkZSBmb3JtYSBhdMOzbWljYSBjb24gbGEgdHJhbnNhY2Npw7NuIG1lZGlhbnRlIGVsIE91dGJveCBQYXR0ZXJuLiBJbmNsdXllIG1vbnRvLCBjdWVudGFzICh0b2tlbml6YWRhcyksIHJlc3VsdGFkbyB5IHRyYXphIGRlIGNvbXBlbnNhY2nDs24gc2kgYXBsaWNhLiIgIk91dGJveCBQYXR0ZXJuIC8gQVdTIFNRUyBGSUZPIFByb2R1Y2VyIgogICAgICAgICAgICAgICAgICAgIG5vdGlmUHVibGlzaGVyID0gY29tcG9uZW50ICJOb3RpZmljYXRpb25FdmVudFB1Ymxpc2hlciIgIlB1YmxpY2EgTm90aWZpY2F0aW9uUmVxdWVzdGVkRXZlbnQgYSBsYSBjb2xhIFNRUyBlc3TDoW5kYXIgcGFyYSBxdWUgZWwgTm90aWZpY2F0aW9uIFNlcnZpY2UgaW5mb3JtZSBhbCBjbGllbnRlIHNvYnJlIGVsIHJlc3VsdGFkbyBkZSBzdSB0cmFuc2ZlcmVuY2lhLiBJbmNsdXllIGNhbmFsIHByZWZlcmlkbywgbW9udG8geSByZWZlcmVuY2lhLiIgIlNwcmluZyBAQ29tcG9uZW50IC8gQVdTIFNRUyBQcm9kdWNlciIKICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBvbmJvYXJkaW5nU3ZjID0gY29udGFpbmVyICJPbmJvYXJkaW5nIFNlcnZpY2UiICJSZWdpc3RyYSBudWV2b3MgY2xpZW50ZXM6IGNhcHR1cmEgeSB2ZXJpZmljYSBkb2N1bWVudG8gY29uIFRleHRyYWN0LCB2YWxpZGEgbGl2ZW5lc3MgeSBjb21wYXJhIGZhY2lhbCBjb24gUmVrb2duaXRpb24sIGNyZWEgY3JlZGVuY2lhbGVzIGVuIEtleWNsb2FrLiIgIlB5dGhvbiAzLjEyIC8gTGFtYmRhIiB7CiAgICAgICAgICAgICAgICAgICAgdGFncyAiTWljcm9zZXJ2aWNlIgogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CgogICAgICAgICAgICAjIEdSVVBPIDQ6IFByb2Nlc2FtaWVudG8gQXPDrW5jcm9ubyB5IFNvcG9ydGUKICAgICAgICAgICAgZ3JvdXAgIlNvcG9ydGUgZSBJbmdlc3RhIEFzw61uY3JvbmEiIHsKICAgICAgICAgICAgICAgIG5vdGlmU3ZjID0gY29udGFpbmVyICJOb3RpZmljYXRpb24gU2VydmljZSIgIkNvbnN1bWUgZXZlbnRvcyBkZSBTUVMgeSBlbnbDrWEgbm90aWZpY2FjaW9uZXMgbXVsdGljYW5hbCBhbCBjbGllbnRlOiBlbWFpbCAoQVdTIFNFUyksIFNNUyAoVHdpbGlvKSB5IHB1c2ggbm90aWZpY2F0aW9ucyAoRkNNL0FQTnMpLiIgIk5vZGUuanMgMjAgLyBMYW1iZGEiIHsKICAgICAgICAgICAgICAgICAgICB0YWdzICJNaWNyb3NlcnZpY2UiCiAgICAgICAgICAgICAgICB9CgogICAgICAgICAgICAgICAgYXVkaXRTdmMgPSBjb250YWluZXIgIkF1ZGl0IFNlcnZpY2UiICJDb25zdW1lIGV2ZW50b3MgZGUgYXVkaXRvcsOtYSBkZXNkZSBTUVMgRklGTyBkZSBmb3JtYSBpZGVtcG90ZW50ZSB5IGxvcyBwZXJzaXN0ZSBkZSBmb3JtYSBpbm11dGFibGUgZW4gZWwgQXVkaXQgREIgbWVkaWFudGUgRXZlbnQgU291cmNpbmcuIiAiSmF2YSAyMSAvIFNwcmluZyBCb290IC8gRUtTIiB7CiAgICAgICAgICAgICAgICAgICAgdGFncyAiTWljcm9zZXJ2aWNlIgoKICAgICAgICAgICAgICAgICAgICBhdWRpdENvbnN1bWVyID0gY29tcG9uZW50ICJBdWRpdEV2ZW50Q29uc3VtZXIiICJDb25zdW1lciBTUVMgRklGTyBxdWUgcmVjaWJlIG1lbnNhamVzIGRlIGF1ZGl0b3LDrWEuIEltcGxlbWVudGEgZGVkdXBsaWNhY2nDs24gcG9yIGV2ZW50SWQgKHRhYmxhIGJsb29tIGZpbHRlciBlbiBSZWRpcykgcGFyYSBnYXJhbnRpemFyIGlkZW1wb3RlbmNpYSBhbnRlIHJlaW50ZW50b3MgZGVsIGJ1cy4gRGVzZXJpYWxpemEgeSB2YWxpZGEgZWwgZXNxdWVtYSBkZWwgZXZlbnRvLiIgIlNwcmluZyBJbnRlZ3JhdGlvbiAvIFNRUyBNZXNzYWdlIExpc3RlbmVyIC8gSWRlbXBvdGVudCBDb25zdW1lciIKICAgICAgICAgICAgICAgICAgICBhdWRpdEhhbmRsZXIgPSBjb21wb25lbnQgIkF1ZGl0Q29tbWFuZEhhbmRsZXIiICJFbnJpcXVlY2UgZWwgZXZlbnRvIGNvbiBtZXRhZGF0b3MgZGVsIHNlcnZpZG9yOiB0aW1lc3RhbXAgYXV0aG9yaXRhdGl2ZSwgZ2VvbG9jYWxpemFjacOzbiBhcHJveGltYWRhIHBvciBJUCAoR2VvSVAyKSwgaGFzaCBkZWwgdXNlckFnZW50LCB2ZXJzacOzbiBkZWwgZXNxdWVtYS4gT3JxdWVzdGEgZWwgY8OhbGN1bG8gZGVsIGhhc2ggY2hhaW4geSBkZWxlZ2EgbGEgcGVyc2lzdGVuY2lhLiIgIlNwcmluZyBAU2VydmljZSAvIERvbWFpbiBDb21tYW5kIEhhbmRsZXIiCiAgICAgICAgICAgICAgICAgICAgaGFzaENoYWluU3ZjID0gY29tcG9uZW50ICJIYXNoQ2hhaW5TZXJ2aWNlIiAiQ2FsY3VsYSBlbCBoYXNoIGRlIGludGVncmlkYWQgZW5jYWRlbmFkbzogaGFzaENoYWluID0gU0hBLTI1NihwcmV2RXZlbnRIYXNoICsgY3VycmVudEV2ZW50UGF5bG9hZCkuIEVsIHByaW1lciBldmVudG8gZGUgY2FkYSBkw61hIHVzYSBjb21vIHNlbWlsbGEgZWwgaGFzaCBkZWwgYmxvcXVlIGFudGVyaW9yIChzaW1pbGFyIGEgYmxvY2tjaGFpbikuIEN1YWxxdWllciBhbHRlcmFjacOzbiBkZWwgcmVnaXN0cm8gaGlzdMOzcmljbyBlcyBkZXRlY3RhYmxlLiIgIlNwcmluZyBAQ29tcG9uZW50IC8gQ3J5cHRvZ3JhcGhpYyBTZXJ2aWNlIC8gU0hBLTI1NiIKICAgICAgICAgICAgICAgICAgICBhdWRpdFJlcG8gPSBjb21wb25lbnQgIkF1ZGl0UmVwb3NpdG9yeSIgIlJlcG9zaXRvcmlvIGFwcGVuZC1vbmx5IHF1ZSBwZXJzaXN0ZSBldmVudG9zIGVuIFBvc3RncmVTUUwuIFBvbMOtdGljYXMgYSBuaXZlbCBkZSBCRCAoUm93LUxldmVsIFNlY3VyaXR5ICsgR1JBTlQgc29sbyBJTlNFUlQpIGltcGlkZW4gVVBEQVRFIHkgREVMRVRFLiBMb3MgZGF0b3MgUElJIGRlbCBwYXlsb2FkIHNlIGNpZnJhbiBjb24gQVdTIEtNUyBhbnRlcyBkZSBwZXJzaXN0aXIuIFBhcnRpY2lvbmFkbyBwb3IgbWVzIHBhcmEgY29uc3VsdGFzIGRlIGF1ZGl0b3LDrWEgZWZpY2llbnRlcy4iICJTcHJpbmcgRGF0YSBKUEEgLyBAUmVwb3NpdG9yeSAvIFdPUk0gLyBBV1MgS01TIgogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CgogICAgICAgICAgICAjIEdSVVBPIDU6IENhcGEgZGUgRGF0b3MgZSBJbmZyYWVzdHJ1Y3R1cmEgQ29tw7puCiAgICAgICAgICAgIGdyb3VwICJEYXRvcyBlIEluZnJhZXN0cnVjdHVyYSIgewogICAgICAgICAgICAgICAgYXVkaXREYiA9IGNvbnRhaW5lciAiQXVkaXQgREIiICJFdmVudCBzdG9yZSBpbm11dGFibGUgZGUgdG9kYXMgbGFzIGFjY2lvbmVzIGRlbCBjbGllbnRlLiBBcHBlbmQtb25seSwgV09STSwgaGFzaCBjaGFpbiB2ZXJpZmljYWJsZS4gUmV0ZW5jacOzbiBtw61uaW1hIDcgYcOxb3MgKENpcmN1bGFyIFNGQyAwNTIpLiIgIlBvc3RncmVTUUwgMTUgLyBSRFMgTXVsdGktQVoiIHsKICAgICAgICAgICAgICAgICAgICB0YWdzICJEYXRhYmFzZSIKICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICByZWRpc0NhY2hlID0gY29udGFpbmVyICJSZWRpcyBDYWNoZSIgIkNhY2jDqSBlbiBtZW1vcmlhIHBhcmEgZGF0b3MgZnJlY3VlbnRlcyBkZSBjbGllbnRlcyAocGVyZmlsLCBjdWVudGFzLCDDumx0aW1vcyBtb3ZpbWllbnRvcykgY29uIHBhdHLDs24gQ2FjaGUtQXNpZGUuIENsdXN0ZXIgTW9kZSBjb24gcsOpcGxpY2FzIE11bHRpLUFaLiIgIkFXUyBFbGFzdGlDYWNoZSBSZWRpcyA3IOKAlCBDbHVzdGVyIE1vZGUiIHsKICAgICAgICAgICAgICAgICAgICB0YWdzICJEYXRhYmFzZSIKICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBtZXNzYWdlQnVzID0gY29udGFpbmVyICJNZXNzYWdlIEJ1cyIgIkJ1cyBkZSBldmVudG9zIGFzw61uY3Jvbm8gcGFyYSBkZXNhY29wbGFyIG1pY3Jvc2VydmljaW9zLiBDb2xhcyBGSUZPIHBhcmEgYXVkaXRvcsOtYSAob3JkZW4gZ2FyYW50aXphZG8pIHkgU3RhbmRhcmQgcGFyYSBub3RpZmljYWNpb25lcy4gRExRIGVuIGFtYmFzLiIgIkFXUyBTUVMgRklGTyArIFNOUyBGYW4tb3V0IiB7CiAgICAgICAgICAgICAgICAgICAgdGFncyAiTWVzc2FnZSBCdXMiCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgICMg4pSA4pSA4pSAIFJFTEFDSU9ORVMgTklWRUwgMSAoQ09OVEVYVE8pIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgAogICAgICAgIGNsaWVudGUgICAgICAtPiBiYW5jYUJQICAgICAgICAiQ29uc3VsdGEgc2FsZG9zIGUgaGlzdMOzcmljbywgcmVhbGl6YSB0cmFuc2ZlcmVuY2lhcyB5IHBhZ29zIiAiSFRUUFMgLyBUTFMgMS4zIgogICAgICAgIGJhbmNhQlAgICAgICAtPiBjb3JlQmFua2luZyAgICAiQ29uc3VsdGEgZGF0b3MgYsOhc2ljb3MgZGUgY2xpZW50ZSwgY3VlbnRhcyB5IG1vdmltaWVudG9zIiAiUkVTVCAvIFNPQVAgLyBtVExTIgogICAgICAgIGJhbmNhQlAgICAgICAtPiBzaXN0ZW1hQ29tcGwgICAiT2J0aWVuZSBpbmZvcm1hY2nDs24gZGV0YWxsYWRhIGRlbCBjbGllbnRlIGJham8gZGVtYW5kYSIgIlJFU1QgLyBIVFRQUyIKICAgICAgICBiYW5jYUJQICAgICAgLT4gbm90aWZpY2FjaW9uZXMgIkVudsOtYSBub3RpZmljYWNpb25lcyBkZSBtb3ZpbWllbnRvcyB5IGFsZXJ0YXMgZGUgc2VndXJpZGFkIiAiU01UUCAvIEhUVFBTIgogICAgICAgIGJhbmNhQlAgICAgICAtPiByZWRJbnRlcmJhbmsgICAiUHJvY2VzYSDDs3JkZW5lcyBkZSB0cmFuc2ZlcmVuY2lhIGludGVyYmFuY2FyaWEiICJJU08gMjAwMjIgLyBTV0lGVCIKCiAgICAgICAgIyDilIDilIDilIAgUkVMQUNJT05FUyBOSVZFTCAyIChDT05URU5FRE9SRVMpIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgAogICAgICAgIGNsaWVudGUgICAgICAtPiBzcGFBbmd1bGFyICAgICAiQWNjZWRlIGEgYmFuY2Egd2ViIiAiSFRUUFMgLyBUTFMgMS4zIgogICAgICAgIGNsaWVudGUgICAgICAtPiBhcHBGbHV0dGVyICAgICAiQWNjZWRlIGEgYmFuY2EgbcOzdmlsIiAiSFRUUFMgLyBUTFMgMS4zIgogICAgICAgIAogICAgICAgIHNwYUFuZ3VsYXIgICAtPiBrZXljbG9hayAgICAgICAiQXV0ZW50aWNhY2nDs24gT0F1dGggMi4wIiAiSFRUUFMgLyBPSURDIgogICAgICAgIGFwcEZsdXR0ZXIgICAtPiBrZXljbG9hayAgICAgICAiQXV0ZW50aWNhY2nDs24gT0F1dGggMi4wIiAiSFRUUFMgLyBPSURDIgogICAgICAgIAogICAgICAgIHNwYUFuZ3VsYXIgICAtPiBhcGlHYXRld2F5ICAgICAiQVBJIGNhbGxzIGNvbiBKV1QiICJIVFRQUyAvIFJFU1QiCiAgICAgICAgYXBwRmx1dHRlciAgIC0+IGFwaUdhdGV3YXkgICAgICJBUEkgY2FsbHMgY29uIEpXVCIgIkhUVFBTIC8gUkVTVCIKICAgICAgICAKICAgICAgICBhcGlHYXRld2F5ICAgLT4gY3VzdG9tZXJTdmMgICAgIkdFVCAvY3VzdG9tZXJzIiAiSFRUUFMgLyBSRVNUIgogICAgICAgIGFwaUdhdGV3YXkgICAtPiBtb3ZlbWVudHNTdmMgICAiR0VUIC9tb3ZlbWVudHMiICJIVFRQUyAvIFJFU1QiCiAgICAgICAgYXBpR2F0ZXdheSAgIC0+IHRyYW5zZmVyU3ZjICAgICJQT1NUIC90cmFuc2ZlcnMiICJIVFRQUyAvIFJFU1QiCiAgICAgICAgYXBpR2F0ZXdheSAgIC0+IG5vdGlmU3ZjICAgICAgICJQT1NUIC9ub3RpZmljYXRpb25zIiAiSFRUUFMgLyBSRVNUIgogICAgICAgIGFwaUdhdGV3YXkgICAtPiBvbmJvYXJkaW5nU3ZjICAiUE9TVCAvb25ib2FyZGluZyIgIkhUVFBTIC8gUkVTVCIKICAgICAgICAKICAgICAgICBtb3ZlbWVudHNTdmMgLT4gY29yZUJhbmtpbmcgICAgIkNvbnN1bHRhIG1vdmltaWVudG9zIiAiUkVTVCAvIG1UTFMiCiAgICAgICAgdHJhbnNmZXJTdmMgIC0+IGNvcmVCYW5raW5nICAgICJEw6liaXRvIHkgY3LDqWRpdG8iICJSRVNUIC8gbVRMUyIKICAgICAgICB0cmFuc2ZlclN2YyAgLT4gcmVkSW50ZXJiYW5rICAgIkVudsOtYSBvcmRlbiBBQ0giICJJU08gMjAwMjIgLyBtVExTIgogICAgICAgIG5vdGlmU3ZjICAgICAtPiBtZXNzYWdlQnVzICAgICAiQ29uc3VtZSBub3RpZmljYWNpb25lcyIgIkFXUyBTUVMiCiAgICAgICAgbm90aWZTdmMgICAgIC0+IG5vdGlmaWNhY2lvbmVzICJFbnbDrWEgZW1haWwgeSBTTVMiICJTTVRQIC8gSFRUUFMiCiAgICAgICAgb25ib2FyZGluZ1N2YyAtPiByZWtvZ25pdGlvbiAgICJWZXJpZmljYWNpw7NuIGJpb23DqXRyaWNhIiAiSFRUUFMgLyBBV1MgU0RLIgogICAgICAgIG9uYm9hcmRpbmdTdmMgLT4ga2V5Y2xvYWsgICAgICAiQ3JlYSB1c3VhcmlvIiAiSFRUUFMgLyBBZG1pbiBSRVNUIEFQSSIKICAgICAgICAKICAgICAgICBjdXN0b21lclN2YyAgLT4gcmVkaXNDYWNoZSAgICAgIkNhY2hlLUFzaWRlIiAiUmVkaXMgUHJvdG9jb2wiCiAgICAgICAgY3VzdG9tZXJTdmMgIC0+IGNvcmVCYW5raW5nICAgICJDb25zdWx0YSBiw6FzaWNvcyIgIlJFU1QgLyBtVExTIgogICAgICAgIGN1c3RvbWVyU3ZjICAtPiBzaXN0ZW1hQ29tcGwgICAiQ29uc3VsdGEgZXh0ZW5kaWRvcyIgIlJFU1QgLyBIVFRQUyIKICAgICAgICBjdXN0b21lclN2YyAgLT4gbWVzc2FnZUJ1cyAgICAgIlB1YmxpY2EgY29uc3VsdGEiICJBV1MgU1FTIEZJRk8iCiAgICAgICAgdHJhbnNmZXJTdmMgIC0+IG1lc3NhZ2VCdXMgICAgICJQdWJsaWNhIHRyYW5zZmVyZW5jaWEiICJBV1MgU1FTIEZJRk8iCiAgICAgICAgYXVkaXRTdmMgICAgIC0+IG1lc3NhZ2VCdXMgICAgICJDb25zdW1lIGF1ZGl0b3LDrWEiICJBV1MgU1FTIEZJRk8iCiAgICAgICAgYXVkaXRTdmMgICAgIC0+IGF1ZGl0RGIgICAgICAgICJQZXJzaXN0ZSBldmVudG9zIiAiSkRCQyAvIFRMUyIKCiAgICAgICAgIyBBbGwgc2VydmljZXMgcHVibGlzaCBhdWRpdCBldmVudHMgKFJlc3VtaWRvIHBhcmEgbGltcGlhciBsYSB2aXN0YSkKICAgICAgICBjdXN0b21lclN2YyAgLT4gbWVzc2FnZUJ1cyAgICJFdmVudG9zIGF1ZGl0b3LDrWEiICJTUVMgRklGTyIKICAgICAgICB0cmFuc2ZlclN2YyAgLT4gbWVzc2FnZUJ1cyAgICJFdmVudG9zIGF1ZGl0b3LDrWEiICJTUVMgRklGTyIKCiAgICAgICAgIyDilIDilIDilIAgUkVMQUNJT05FUyBOSVZFTCAzIChDT01QT05FTlRFUyBJTlRFUk5PUykg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACiAgICAgICAgd2FmICAgICAgICAgICAgLT4gdG9rZW5WYWxpZGF0b3IgIlBldGljacOzbiBmaWx0cmFkYSIKICAgICAgICB0b2tlblZhbGlkYXRvciAtPiByZXF1ZXN0Um91dGVyICAiVG9rZW4gdmVyaWZpY2FkbyIKICAgICAgICByZXF1ZXN0Um91dGVyICAtPiBjaXJjdWl0QnJlYWtlciAiUGV0aWNpw7NuIGVucnV0YWRhIgogICAgICAgIGNpcmN1aXRCcmVha2VyIC0+IGN1c3RvbWVyQ29udHJvbGxlciAiRW5ydXRhIEdFVCAvY3VzdG9tZXJzIiAiSFRUUFMiCiAgICAgICAgY2lyY3VpdEJyZWFrZXIgLT4gdHJhbnNmZXJDb250cm9sbGVyICJFbnJ1dGEgUE9TVCAvdHJhbnNmZXJzIiAiSFRUUFMiCgogICAgICAgIGN1c3RvbWVyQ29udHJvbGxlciAtPiBjdXN0b21lclF1ZXJ5U3ZjICAgIkRlbGVnYSBjb25zdWx0YSIKICAgICAgICBjdXN0b21lclF1ZXJ5U3ZjICAgLT4gY2FjaGVQcm94eSAgICAgICAgICJWZXJpZmljYSBjYWNow6kiCiAgICAgICAgY2FjaGVQcm94eSAgICAgICAgIC0+IHJlZGlzQ2FjaGUgICAgICAgICAiR0VUIC8gU0VUIiAiUmVkaXMgUHJvdG9jb2wiCiAgICAgICAgY2FjaGVQcm94eSAgICAgICAgIC0+IGNvcmVCYW5raW5nQWRhcHRlciAiTUlTUzogY29uc3VsdGEiCiAgICAgICAgY29yZUJhbmtpbmdBZGFwdGVyIC0+IGNvcmVCYW5raW5nICAgICAgICAiQ29uc3VsdGEgYsOhc2ljb3MiICJtVExTIgogICAgICAgIGN1c3RvbWVyUXVlcnlTdmMgICAtPiBjb21wbEFkYXB0ZXIgICAgICAgIkNvbnN1bHRhIGV4dGVuZGlkb3MiCiAgICAgICAgY29tcGxBZGFwdGVyICAgICAgIC0+IHNpc3RlbWFDb21wbCAgICAgICAiQ29uc3VsdGEgc2NvcmluZyIgIkhUVFBTIgogICAgICAgIGN1c3RvbWVyUXVlcnlTdmMgICAtPiBhdWRpdFB1Ymxpc2hlcjEgICAgIlB1YmxpY2EgYXVkaXRvcsOtYSIKICAgICAgICBhdWRpdFB1Ymxpc2hlcjEgICAgLT4gbWVzc2FnZUJ1cyAgICAgICAgICJFbnbDrWEgZXZlbnRvIiAiU1FTIEZJRk8iCiAgICAgICAgaW52YWxpZGF0b3IgICAgICAgIC0+IGNhY2hlUHJveHkgICAgICAgICAiSW52YWxpZGEgY2FjaMOpIgoKICAgICAgICB0cmFuc2ZlckNvbnRyb2xsZXIgLT4gdHJhbnNmZXJIYW5kbGVyICAgICJFamVjdXRhIGNvbWFuZG8iCiAgICAgICAgdHJhbnNmZXJIYW5kbGVyICAgIC0+IHRyYW5zZmVyVmFsaWRhdG9yICAiVmFsaWRhIG5lZ29jaW8iCiAgICAgICAgdHJhbnNmZXJIYW5kbGVyICAgIC0+IGFjaEFkYXB0ZXIgICAgICAgICAiT3JxdWVzdGEgQUNIIgogICAgICAgIGFjaEFkYXB0ZXIgICAgICAgICAtPiByZWRJbnRlcmJhbmsgICAgICAgIlRyYW5zZmllcmUgZm9uZG9zIiAiSVNPIDIwMDIyIgogICAgICAgIHRyYW5zZmVySGFuZGxlciAgICAtPiBzd2lmdEFkYXB0ZXIgICAgICAgIk9ycXVlc3RhIFNXSUZUIgogICAgICAgIHN3aWZ0QWRhcHRlciAgICAgICAtPiByZWRJbnRlcmJhbmsgICAgICAgIlRyYW5zZmllcmUgaW50ZXJuYWNpb25hbCIgIk1UMTAzIgogICAgICAgIHRyYW5zZmVySGFuZGxlciAgICAtPiBhdWRpdFB1Ymxpc2hlcjIgICAgIlB1YmxpY2EgYXVkaXRvcsOtYSIKICAgICAgICBhdWRpdFB1Ymxpc2hlcjIgICAgLT4gbWVzc2FnZUJ1cyAgICAgICAgICJFbnbDrWEgZXZlbnRvIiAiU1FTIEZJRk8iCiAgICAgICAgdHJhbnNmZXJIYW5kbGVyICAgIC0+IG5vdGlmUHVibGlzaGVyICAgICAiUHVibGljYSBub3RpZmljYWNpw7NuIgogICAgICAgIG5vdGlmUHVibGlzaGVyICAgICAtPiBtZXNzYWdlQnVzICAgICAgICAgIkVudsOtYSBldmVudG8iICJTUVMgU3RhbmRhcmQiCgogICAgICAgIGF1ZGl0Q29uc3VtZXIgICAgICAtPiBtZXNzYWdlQnVzICAgICAgICAgIkNvbnN1bWUgbWVuc2FqZXMiICJTUVMgRklGTyIKICAgICAgICBhdWRpdENvbnN1bWVyICAgICAgLT4gYXVkaXRIYW5kbGVyICAgICAgICJQYXNhIGV2ZW50byIKICAgICAgICBhdWRpdEhhbmRsZXIgICAgICAgLT4gaGFzaENoYWluU3ZjICAgICAgICJTb2xpY2l0YSBmaXJtYWRvIgogICAgICAgIGF1ZGl0SGFuZGxlciAgICAgICAtPiBhdWRpdFJlcG8gICAgICAgICAgIkRlbGVnYSBwZXJzaXN0ZW5jaWEiCiAgICAgICAgYXVkaXRSZXBvICAgICAgICAgIC0+IGF1ZGl0RGIgICAgICAgICAgICAiSU5TRVJUIGFwcGVuZC1vbmx5IiAiSkRCQyIKICAgIH0KCiAgICB2aWV3cyB7CgogICAgICAgIHN5c3RlbUNvbnRleHQgYmFuY2FCUCAiQzQtTDEtQ29udGV4dCIgewogICAgICAgICAgICB0aXRsZSAiRGlhZ3JhbWEgZGUgQ29udGV4dG8g4oCUIEM0IE5pdmVsIDEiCiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvTGF5b3V0IHRiIDMwMCAzMDAKICAgICAgICAgICAgZGVzY3JpcHRpb24gIlZpc3RhIGRlIGFsdG8gbml2ZWwgZGVsIHNpc3RlbWEgZGUgYmFuY2EgZGlnaXRhbCBkZSBCUCB5IHN1IGVudG9ybm8uIgogICAgICAgIH0KCiAgICAgICAgY29udGFpbmVyIGJhbmNhQlAgIkM0LUwyLUNvbnRhaW5lcnMiIHsKICAgICAgICAgICAgdGl0bGUgIkRpYWdyYW1hIGRlIENvbnRlbmVkb3JlcyDigJQgQzQgTml2ZWwgMiIKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9MYXlvdXQgdGIgNDAwIDM1MAogICAgICAgICAgICBkZXNjcmlwdGlvbiAiVmlzdGEgdMOpY25pY2EgZXN0cnVjdHVyYWRhIHBvciBjYXBhcyBsw7NnaWNhcyBtZWRpYW50ZSBhZ3J1cGFjaW9uZXMgZGUgaW5mcmFlc3RydWN0dXJhLiIKICAgICAgICB9CgogICAgICAgIGNvbXBvbmVudCBhcGlHYXRld2F5ICJDNC1MMy1BUElHYXRld2F5IiB7CiAgICAgICAgICAgIHRpdGxlICJDb21wb25lbnRlcyDigJQgQVBJIEdhdGV3YXkgTGF5ZXIiCiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvTGF5b3V0IHRiIDI1MCAyNTAKICAgICAgICAgICAgZGVzY3JpcHRpb24gIkZpbHRyb3MgZGUgc2VndXJpZGFkLCBlbnJ1dGFtaWVudG8geSByZXNpbGllbmNpYSBkZSBlbnRyYWRhLiIKICAgICAgICB9CgogICAgICAgIGNvbXBvbmVudCBjdXN0b21lclN2YyAiQzQtTDMtQ3VzdG9tZXJTZXJ2aWNlIiB7CiAgICAgICAgICAgIHRpdGxlICJDb21wb25lbnRlcyDigJQgQ3VzdG9tZXIgRGF0YSBTZXJ2aWNlIgogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dCB0YiAyNTAgMjUwCiAgICAgICAgICAgIGRlc2NyaXB0aW9uICJPcnF1ZXN0YWNpw7NuIGRlIHBlcmZpbCBkZSBjbGllbnRlIGNvbiBlc3RyYXRlZ2lhIGRlIGNhY2jDqS4iCiAgICAgICAgfQoKICAgICAgICBjb21wb25lbnQgdHJhbnNmZXJTdmMgIkM0LUwzLVRyYW5zZmVyU2VydmljZSIgewogICAgICAgICAgICB0aXRsZSAiQ29tcG9uZW50ZXMg4oCUIFRyYW5zZmVyIFNlcnZpY2UiCiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvTGF5b3V0IHRiIDI1MCAyNTAKICAgICAgICAgICAgZGVzY3JpcHRpb24gIlByb2Nlc2FtaWVudG8gdHJhbnNhY2Npb25hbCBkZSB0cmFuc2ZlcmVuY2lhcyBjb24gcGF0csOzbiBTQUdBLiIKICAgICAgICB9CgogICAgICAgIGNvbXBvbmVudCBhdWRpdFN2YyAiQzQtTDMtQXVkaXRTZXJ2aWNlIiB7CiAgICAgICAgICAgIHRpdGxlICJDb21wb25lbnRlcyDigJQgQXVkaXQgU2VydmljZSIKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9MYXlvdXQgdGIgMjUwIDI1MAogICAgICAgICAgICBkZXNjcmlwdGlvbiAiSW5nZXN0YSBpbm11dGFibGUgZGUgZXZlbnRvcyBjb24gZW5jYWRlbmFtaWVudG8gY3JpcHRvZ3LDoWZpY28uIgogICAgICAgIH0KCiAgICAgICAgc3R5bGVzIHsKICAgICAgICAgICAgZWxlbWVudCAiRWxlbWVudCIgewogICAgICAgICAgICAgICAgbWV0YWRhdGEgZmFsc2UKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uIHRydWUKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJQZXJzb24iIHsKICAgICAgICAgICAgICAgIHNoYXBlIFBlcnNvbgogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMGYxNzJhCiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgICAgICBmb250U2l6ZSAxNQogICAgICAgICAgICAgICAgd2lkdGggMjgwCiAgICAgICAgICAgICAgICBoZWlnaHQgMTYwCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiU29mdHdhcmUgU3lzdGVtIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM0NzU1NjkKICAgICAgICAgICAgICAgIGNvbG9yICNmOGZhZmMKICAgICAgICAgICAgICAgIHNoYXBlIFJvdW5kZWRCb3gKICAgICAgICAgICAgICAgIGZvbnRTaXplIDE0CiAgICAgICAgICAgICAgICB3aWR0aCAzNDAKICAgICAgICAgICAgICAgIGhlaWdodCAxODAKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJDb250YWluZXIiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzFlNDBhZgogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICAgICAgc2hhcGUgUm91bmRlZEJveAogICAgICAgICAgICAgICAgZm9udFNpemUgMTQKICAgICAgICAgICAgICAgIHdpZHRoIDM0MAogICAgICAgICAgICAgICAgaGVpZ2h0IDE4MAogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkNvbXBvbmVudCIgewogICAgICAgICAgICAgICAgc2hhcGUgQ29tcG9uZW50CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMwMjg0YzcKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgICAgIGZvbnRTaXplIDEzCiAgICAgICAgICAgICAgICB3aWR0aCAzNTAKICAgICAgICAgICAgICAgIGhlaWdodCAxOTAKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJXZWIgRnJvbnRlbmQiIHsKICAgICAgICAgICAgICAgIHNoYXBlIFdlYkJyb3dzZXIKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzFkNGVkOAogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIk1vYmlsZSBBcHAiIHsKICAgICAgICAgICAgICAgIHNoYXBlIE1vYmlsZURldmljZVBvcnRyYWl0CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMxZDRlZDgKICAgICAgICAgICAgICAgIHdpZHRoIDI0MAogICAgICAgICAgICAgICAgaGVpZ2h0IDIwMAogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIklkZW50aXR5IFByb3ZpZGVyIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMxZTNhOGEKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJHYXRld2F5IiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMxMTE4MjcKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJNaWNyb3NlcnZpY2UiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzI1NjNlYgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBDeWxpbmRlcgogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMDY1ZjQ2CiAgICAgICAgICAgICAgICB3aWR0aCAyNjAKICAgICAgICAgICAgICAgIGhlaWdodCAxODAKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJNZXNzYWdlIEJ1cyIgewogICAgICAgICAgICAgICAgc2hhcGUgUGlwZQogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjNWIyMWI2CiAgICAgICAgICAgICAgICB3aWR0aCAzMDAKICAgICAgICAgICAgICAgIGhlaWdodCAxNDAKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJFeHRlcm5hbCBTeXN0ZW0iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzY0NzQ4YgogICAgICAgICAgICAgICAgY29sb3IgI2Y4ZmFmYwogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkJQIEludGVybmFsIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMxZTQwYWYKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgIlJlbGF0aW9uc2hpcCIgewogICAgICAgICAgICAgICAgY29sb3IgIzk0YTNiOAogICAgICAgICAgICAgICAgdGhpY2tuZXNzIDIKICAgICAgICAgICAgICAgIGZvbnRTaXplIDEyCiAgICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgIHRoZW1lIGRlZmF1bHQKICAgIH0KfQ==",
+    "structurizr.inspection.info" : "0",
+    "structurizr.inspection.ignore" : "0",
+    "structurizr.inspection.warning" : "0"
+  },
+  "views" : {
+    "componentViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 250,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 250,
+        "vertices" : true
+      },
+      "containerId" : "11",
+      "description" : "Filtros de seguridad, enrutamiento y resiliencia de entrada.",
+      "elements" : [ {
+        "id" : "12",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "13",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "14",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "15",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "16",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "25",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalContainerBoundariesVisible" : false,
+      "key" : "C4-L3-APIGateway",
+      "name" : "Component View: Sistema de Banca por Internet [BP] - API Gateway + WAF",
+      "order" : 3,
+      "relationships" : [ {
+        "id" : "76"
+      }, {
+        "id" : "77"
+      }, {
+        "id" : "78"
+      }, {
+        "id" : "80"
+      }, {
+        "id" : "83"
+      } ],
+      "title" : "Componentes — API Gateway Layer"
+    }, {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 250,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 250,
+        "vertices" : true
+      },
+      "containerId" : "16",
+      "description" : "Orquestación de perfil de cliente con estrategia de caché.",
+      "elements" : [ {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "11",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "17",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "18",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "19",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "20",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "21",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "22",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "23",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "41",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "42",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalContainerBoundariesVisible" : false,
+      "key" : "C4-L3-CustomerService",
+      "name" : "Component View: Sistema de Banca por Internet [BP] - Customer Data Service",
+      "order" : 4,
+      "relationships" : [ {
+        "id" : "81"
+      }, {
+        "id" : "85"
+      }, {
+        "id" : "86"
+      }, {
+        "id" : "87"
+      }, {
+        "id" : "88"
+      }, {
+        "id" : "89"
+      }, {
+        "id" : "90"
+      }, {
+        "id" : "91"
+      }, {
+        "id" : "92"
+      }, {
+        "id" : "93"
+      }, {
+        "id" : "94"
+      } ],
+      "title" : "Componentes — Customer Data Service"
+    }, {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 250,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 250,
+        "vertices" : true
+      },
+      "containerId" : "25",
+      "description" : "Procesamiento transaccional de transferencias con patrón SAGA.",
+      "elements" : [ {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "11",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "26",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "27",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "28",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "29",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "30",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "31",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "32",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "42",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalContainerBoundariesVisible" : false,
+      "key" : "C4-L3-TransferService",
+      "name" : "Component View: Sistema de Banca por Internet [BP] - Transfer Service",
+      "order" : 5,
+      "relationships" : [ {
+        "id" : "100"
+      }, {
+        "id" : "101"
+      }, {
+        "id" : "102"
+      }, {
+        "id" : "103"
+      }, {
+        "id" : "104"
+      }, {
+        "id" : "84"
+      }, {
+        "id" : "95"
+      }, {
+        "id" : "96"
+      }, {
+        "id" : "97"
+      }, {
+        "id" : "98"
+      }, {
+        "id" : "99"
+      } ],
+      "title" : "Componentes — Transfer Service"
+    }, {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 250,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 250,
+        "vertices" : true
+      },
+      "containerId" : "35",
+      "description" : "Ingesta inmutable de eventos con encadenamiento criptográfico.",
+      "elements" : [ {
+        "id" : "36",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "37",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "38",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "39",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "40",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "42",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalContainerBoundariesVisible" : false,
+      "key" : "C4-L3-AuditService",
+      "name" : "Component View: Sistema de Banca por Internet [BP] - Audit Service",
+      "order" : 6,
+      "relationships" : [ {
+        "id" : "105"
+      }, {
+        "id" : "106"
+      }, {
+        "id" : "107"
+      }, {
+        "id" : "108"
+      }, {
+        "id" : "109"
+      } ],
+      "title" : "Componentes — Audit Service"
+    } ],
+    "configuration" : {
+      "styles" : {
+        "elements" : [ {
+          "background" : "#1e40af",
+          "tag" : "BP Internal"
+        }, {
+          "background" : "#0284c7",
+          "color" : "#ffffff",
+          "fontSize" : 13,
+          "height" : 190,
+          "shape" : "Component",
+          "tag" : "Component",
+          "width" : 350
+        }, {
+          "background" : "#1e40af",
+          "color" : "#ffffff",
+          "fontSize" : 14,
+          "height" : 180,
+          "shape" : "RoundedBox",
+          "tag" : "Container",
+          "width" : 340
+        }, {
+          "background" : "#065f46",
+          "height" : 180,
+          "shape" : "Cylinder",
+          "tag" : "Database",
+          "width" : 260
+        }, {
+          "description" : true,
+          "metadata" : false,
+          "tag" : "Element"
+        }, {
+          "background" : "#64748b",
+          "color" : "#f8fafc",
+          "tag" : "External System"
+        }, {
+          "background" : "#111827",
+          "tag" : "Gateway"
+        }, {
+          "background" : "#1e3a8a",
+          "tag" : "Identity Provider"
+        }, {
+          "background" : "#5b21b6",
+          "height" : 140,
+          "shape" : "Pipe",
+          "tag" : "Message Bus",
+          "width" : 300
+        }, {
+          "background" : "#2563eb",
+          "tag" : "Microservice"
+        }, {
+          "background" : "#1d4ed8",
+          "height" : 200,
+          "shape" : "MobileDevicePortrait",
+          "tag" : "Mobile App",
+          "width" : 240
+        }, {
+          "background" : "#0f172a",
+          "color" : "#ffffff",
+          "fontSize" : 15,
+          "height" : 160,
+          "shape" : "Person",
+          "tag" : "Person",
+          "width" : 280
+        }, {
+          "background" : "#475569",
+          "color" : "#f8fafc",
+          "fontSize" : 14,
+          "height" : 180,
+          "shape" : "RoundedBox",
+          "tag" : "Software System",
+          "width" : 340
+        }, {
+          "background" : "#1d4ed8",
+          "shape" : "WebBrowser",
+          "tag" : "Web Frontend"
+        } ],
+        "relationships" : [ {
+          "color" : "#94a3b8",
+          "fontSize" : 12,
+          "tag" : "Relationship",
+          "thickness" : 2
+        } ]
+      },
+      "terminology" : { },
+      "themes" : [ "https://static.structurizr.com/themes/default/theme.json" ]
+    },
+    "containerViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 350,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 400,
+        "vertices" : true
+      },
+      "description" : "Vista técnica estructurada por capas lógicas mediante agrupaciones de infraestructura.",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "10",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "11",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "16",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "24",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "25",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "33",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "34",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "35",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "40",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "41",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "42",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "key" : "C4-L2-Containers",
+      "name" : "Container View: Sistema de Banca por Internet [BP]",
+      "order" : 2,
+      "relationships" : [ {
+        "id" : "48"
+      }, {
+        "id" : "49"
+      }, {
+        "id" : "50"
+      }, {
+        "id" : "51"
+      }, {
+        "id" : "52"
+      }, {
+        "id" : "53"
+      }, {
+        "id" : "54"
+      }, {
+        "id" : "55"
+      }, {
+        "id" : "56"
+      }, {
+        "id" : "57"
+      }, {
+        "id" : "58"
+      }, {
+        "id" : "59"
+      }, {
+        "id" : "60"
+      }, {
+        "id" : "61"
+      }, {
+        "id" : "62"
+      }, {
+        "id" : "63"
+      }, {
+        "id" : "64"
+      }, {
+        "id" : "66"
+      }, {
+        "id" : "67"
+      }, {
+        "id" : "68"
+      }, {
+        "id" : "69"
+      }, {
+        "id" : "70"
+      }, {
+        "id" : "71"
+      }, {
+        "id" : "72"
+      }, {
+        "id" : "73"
+      }, {
+        "id" : "74"
+      }, {
+        "id" : "75"
+      } ],
+      "softwareSystemId" : "7",
+      "title" : "Diagrama de Contenedores — C4 Nivel 2"
+    } ],
+    "systemContextViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 300,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 300,
+        "vertices" : true
+      },
+      "description" : "Vista de alto nivel del sistema de banca digital de BP y su entorno.",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "7",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "C4-L1-Context",
+      "name" : "System Context View: Sistema de Banca por Internet [BP]",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "43"
+      }, {
+        "id" : "44"
+      }, {
+        "id" : "45"
+      }, {
+        "id" : "46"
+      }, {
+        "id" : "47"
+      }, {
+        "id" : "65"
+      } ],
+      "softwareSystemId" : "7",
+      "title" : "Diagrama de Contexto — C4 Nivel 1"
+    } ]
+  }
+}
